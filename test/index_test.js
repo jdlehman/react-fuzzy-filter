@@ -1,7 +1,19 @@
 import expect from 'expect';
-import {shallow} from 'enzyme';
+import {shallow, mount} from 'enzyme';
 import React, {PropTypes} from 'react';
 import ReactFuzzyFilter from '../src';
+
+function WrapperComponent({children}) {
+  return (
+    <div className="wrapper">
+      {children}
+    </div>
+  );
+};
+
+WrapperComponent.propTypes = {
+  children: PropTypes.any
+};
 
 const items = [
   { name: 'one', searchData: 'hello' },
@@ -62,6 +74,18 @@ describe('ReactFuzzyFilter', () => {
       };
       const wrapper = shallow(<ReactFuzzyFilter renderItem={defaultRender} inputProps={inputProps} />);
       expect(wrapper.find('.react-fuzzy-filter__input').html()).toEqual('<input class="react-fuzzy-filter__input" placeholder="Filter"/>');
+    });
+
+    it('allows input wrapper', () => {
+      const wrapper = mount(<ReactFuzzyFilter renderItem={defaultRender} inputWrapper={WrapperComponent} />);
+      expect(wrapper.find('.wrapper').length).toEqual(1);
+      expect(wrapper.find('.wrapper').find('.react-fuzzy-filter__input').length).toEqual(1);
+    });
+
+    it('allows results wrapper', () => {
+      const wrapper = mount(<ReactFuzzyFilter renderItem={defaultRender} resultsWrapper={WrapperComponent} />);
+      expect(wrapper.find('.wrapper').length).toEqual(1);
+      expect(wrapper.find('.wrapper').find('.react-fuzzy-filter__items-container').length).toEqual(1);
     });
   });
 

@@ -71,3 +71,11 @@ class MyComponent extends Component {
 ### inputProps
 
 `inputProps` is an object containing additional props to be passed to the input field.
+
+### resultsWrapper
+
+`resultsWrapper` is an optional component that will wrap the results (`react-fuzzy-filter__items-container`) if defined.
+
+### inputsWrapper
+
+`inputsWrapper` is an optional component that will wrap the input (`react-fuzzy-filter__input`) if defined.

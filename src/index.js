@@ -11,7 +11,9 @@ export default class ReactFuzzyFilter extends Component {
     defaultAllItems: PropTypes.bool,
     classPrefix: PropTypes.string,
     initialSearch: PropTypes.string,
-    inputProps: PropTypes.object
+    inputProps: PropTypes.object,
+    resultsWrapper: PropTypes.any,
+    inputWrapper: PropTypes.any
   };
 
   static defaultProps = {
@@ -33,17 +35,39 @@ export default class ReactFuzzyFilter extends Component {
       .map((item, i) => this.props.renderItem(item, i));
   }
 
+  renderInput() {
+    const input = (
+      <input
+        className={`${this.props.classPrefix}__input`}
+        onChange={({target: {value}}) => this.setState({search: value})}
+        {...this.props.inputProps}
+      />
+    );
+    if (this.props.inputWrapper) {
+      return React.createElement(this.props.inputWrapper, {}, input);
+    } else {
+      return input;
+    }
+  }
+
+  renderResults() {
+    const results = (
+      <span className={`${this.props.classPrefix}__items-container`}>
+        {this.renderItems()}
+      </span>
+    );
+    if (this.props.resultsWrapper) {
+      return React.createElement(this.props.resultsWrapper, {}, results);
+    } else {
+      return results;
+    }
+  }
+
   render() {
     return (
       <span className={`${this.props.classPrefix}__container`}>
-        <input
-          className={`${this.props.classPrefix}__input`}
-          onChange={({target: {value}}) => this.setState({search: value})}
-          {...this.props.inputProps}
-        />
-        <span className={`${this.props.classPrefix}__items-container`}>
-          {this.renderItems()}
-        </span>
+        {this.renderInput()}
+        {this.renderResults()}
       </span>
     );
   }
