@@ -55,6 +55,14 @@ describe('ReactFuzzyFilter', () => {
       expect(wrapper.find('.my-custom__input').length).toEqual(1);
       expect(wrapper.find('.my-custom__items-container').length).toEqual(1);
     });
+
+    it('allows input props', () => {
+      const inputProps = {
+        placeholder: 'Filter'
+      };
+      const wrapper = shallow(<ReactFuzzyFilter renderItem={defaultRender} inputProps={inputProps} />);
+      expect(wrapper.find('.react-fuzzy-filter__input').html()).toEqual('<input class="react-fuzzy-filter__input" placeholder="Filter"/>');
+    });
   });
 
   describe('filtering items', () => {

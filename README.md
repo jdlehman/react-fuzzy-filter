@@ -67,3 +67,7 @@ class MyComponent extends Component {
 ### initialSearch
 
 `initialSearch` is a string that can override the initial search state when the component is created. It defaults to `''`.
+
+### inputProps
+
+`inputProps` is an object containing additional props to be passed to the input field.

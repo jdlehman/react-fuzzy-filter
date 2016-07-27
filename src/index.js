@@ -10,7 +10,8 @@ export default class ReactFuzzyFilter extends Component {
     items: PropTypes.array.isRequired,
     defaultAllItems: PropTypes.bool,
     classPrefix: PropTypes.string,
-    initialSearch: PropTypes.string
+    initialSearch: PropTypes.string,
+    inputProps: PropTypes.object
   };
 
   static defaultProps = {
@@ -18,7 +19,8 @@ export default class ReactFuzzyFilter extends Component {
     items: [],
     defaultAllItems: true,
     classPrefix: 'react-fuzzy-filter',
-    initialSearch: ''
+    initialSearch: '',
+    inputProps: {}
   };
 
   state = {
@@ -34,7 +36,11 @@ export default class ReactFuzzyFilter extends Component {
   render() {
     return (
       <span className={`${this.props.classPrefix}__container`}>
-        <input className={`${this.props.classPrefix}__input`} onChange={({target: {value}}) => this.setState({search: value})} />
+        <input
+          className={`${this.props.classPrefix}__input`}
+          onChange={({target: {value}}) => this.setState({search: value})}
+          {...this.props.inputProps}
+        />
         <span className={`${this.props.classPrefix}__items-container`}>
           {this.renderItems()}
         </span>
