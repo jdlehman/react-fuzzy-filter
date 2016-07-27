@@ -74,7 +74,7 @@ class MyComponent extends Component {
 
 ### resultsWrapper
 
-`resultsWrapper` is an optional component that will wrap the results (`react-fuzzy-filter__items-container`) if defined.
+`resultsWrapper` is an optional component that will wrap the results if defined. This will be used as the wrapper around teh items INSTEAD of `react-fuzzy-filter__items-container`.
 
 ### inputsWrapper
 

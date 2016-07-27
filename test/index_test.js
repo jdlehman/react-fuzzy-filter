@@ -92,9 +92,9 @@ describe('ReactFuzzyFilter', () => {
       const extraProps = {
         value: 'hello'
       };
-      const wrapper = mount(<ReactFuzzyFilter renderItem={defaultRender} resultsWrapper={WrapperComponent} resultsWrapperProps={extraProps} />);
+      const wrapper = mount(<ReactFuzzyFilter renderItem={defaultRender} resultsWrapper={WrapperComponent} resultsWrapperProps={extraProps} items={items} />);
       expect(wrapper.find('.wrapper').length).toEqual(1);
-      expect(wrapper.find('.wrapper').find('.react-fuzzy-filter__items-container').length).toEqual(1);
+      expect(wrapper.find('.wrapper').find('.my-item').length).toEqual(4);
       expect(wrapper.find('.wrapper').find('.wrapper__val').text()).toEqual('hello');
     });
   });

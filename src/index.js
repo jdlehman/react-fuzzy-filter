@@ -55,15 +55,14 @@ export default class ReactFuzzyFilter extends Component {
   }
 
   renderResults() {
-    const results = (
-      <span className={`${this.props.classPrefix}__items-container`}>
-        {this.renderItems()}
-      </span>
-    );
     if (this.props.resultsWrapper) {
-      return React.createElement(this.props.resultsWrapper, this.props.resultsWrapperProps, results);
+      return React.createElement(this.props.resultsWrapper, this.props.resultsWrapperProps, this.renderItems());
     } else {
-      return results;
+      return (
+        <span className={`${this.props.classPrefix}__items-container`}>
+          {this.renderItems()}
+        </span>
+      );
     }
   }
 
