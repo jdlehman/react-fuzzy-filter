@@ -79,3 +79,11 @@ class MyComponent extends Component {
 ### inputsWrapper
 
 `inputsWrapper` is an optional component that will wrap the input (`react-fuzzy-filter__input`) if defined.
+
+### resultsWrapperProps
+
+`resultsWrapperProps` is an optional object containing additional props to be passed to the `resultsWrapper`.
+
+### inputWrapperProps
+
+`inputWrapperProps` is an optional object containing additional props to be passed to the `inputWrapper`.

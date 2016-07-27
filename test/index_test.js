@@ -3,16 +3,18 @@ import {shallow, mount} from 'enzyme';
 import React, {PropTypes} from 'react';
 import ReactFuzzyFilter from '../src';
 
-function WrapperComponent({children}) {
+function WrapperComponent({children, value}) {
   return (
     <div className="wrapper">
+      <span className="wrapper__val">{value}</span>
       {children}
     </div>
   );
 };
 
 WrapperComponent.propTypes = {
-  children: PropTypes.any
+  children: PropTypes.any,
+  value: PropTypes.string
 };
 
 const items = [
@@ -76,16 +78,24 @@ describe('ReactFuzzyFilter', () => {
       expect(wrapper.find('.react-fuzzy-filter__input').html()).toEqual('<input class="react-fuzzy-filter__input" placeholder="Filter"/>');
     });
 
-    it('allows input wrapper', () => {
-      const wrapper = mount(<ReactFuzzyFilter renderItem={defaultRender} inputWrapper={WrapperComponent} />);
+    it('allows input wrapper and input wrapper props', () => {
+      const extraProps = {
+        value: 'hello'
+      };
+      const wrapper = mount(<ReactFuzzyFilter renderItem={defaultRender} inputWrapper={WrapperComponent} inputWrapperProps={extraProps} />);
       expect(wrapper.find('.wrapper').length).toEqual(1);
       expect(wrapper.find('.wrapper').find('.react-fuzzy-filter__input').length).toEqual(1);
+      expect(wrapper.find('.wrapper').find('.wrapper__val').text()).toEqual('hello');
     });
 
-    it('allows results wrapper', () => {
-      const wrapper = mount(<ReactFuzzyFilter renderItem={defaultRender} resultsWrapper={WrapperComponent} />);
+    it('allows results wrapper and result wrapper props', () => {
+      const extraProps = {
+        value: 'hello'
+      };
+      const wrapper = mount(<ReactFuzzyFilter renderItem={defaultRender} resultsWrapper={WrapperComponent} resultsWrapperProps={extraProps} />);
       expect(wrapper.find('.wrapper').length).toEqual(1);
       expect(wrapper.find('.wrapper').find('.react-fuzzy-filter__items-container').length).toEqual(1);
+      expect(wrapper.find('.wrapper').find('.wrapper__val').text()).toEqual('hello');
     });
   });
 

@@ -12,6 +12,8 @@ export default class ReactFuzzyFilter extends Component {
     classPrefix: PropTypes.string,
     initialSearch: PropTypes.string,
     inputProps: PropTypes.object,
+    resultsWrapperProps: PropTypes.object,
+    inputWrapperProps: PropTypes.object,
     resultsWrapper: PropTypes.any,
     inputWrapper: PropTypes.any
   };
@@ -22,7 +24,9 @@ export default class ReactFuzzyFilter extends Component {
     defaultAllItems: true,
     classPrefix: 'react-fuzzy-filter',
     initialSearch: '',
-    inputProps: {}
+    inputProps: {},
+    resultsWrapperProps: {},
+    inputWrapperProps: {}
   };
 
   state = {
@@ -44,7 +48,7 @@ export default class ReactFuzzyFilter extends Component {
       />
     );
     if (this.props.inputWrapper) {
-      return React.createElement(this.props.inputWrapper, {}, input);
+      return React.createElement(this.props.inputWrapper, this.props.inputWrapperProps, input);
     } else {
       return input;
     }
@@ -57,7 +61,7 @@ export default class ReactFuzzyFilter extends Component {
       </span>
     );
     if (this.props.resultsWrapper) {
-      return React.createElement(this.props.resultsWrapper, {}, results);
+      return React.createElement(this.props.resultsWrapper, this.props.resultsWrapperProps, results);
     } else {
       return results;
     }
