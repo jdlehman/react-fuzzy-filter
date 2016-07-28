@@ -1,6 +1,6 @@
 # react-fuzzy-filter
 
-ReactFuzzyFilter fuzzy filters a list of data based on the search value typed in the input field. Each matching list item is rendered via a custom render function.
+Fuzzy filter a list of data based on the search value typed in the input field. Each matching list item is rendered via a custom render function.
 
 ## Installation
 
@@ -10,9 +10,14 @@ npm install -S react-fuzzy-filter
 
 ## Example Usage
 
+The default export of ReactFuzzyFilter is a factory function that returns two components, `InputFilter` and `FilterResults`. `FilterResults` receives the data typed into the `InputFilter` and uses it to fuzzy filter matches in its items. Each item is then rendered via a custom render function. Each invocation of the factory function creates two new "linked" components that can be used anywhere. The components do not need to live in the same component or part of the page.
+
 ```js
 import React, {Component} from 'react';
-import ReactFuzzyFilter from 'react-fuzzy-filter';
+import fuzzyFilterFactory from 'react-fuzzy-filter';
+
+// these components share state and can even live in different components
+const {InputFilter, FilterResults} = fuzzyFilterFactory();
 
 class MyComponent extends Component {
   renderItem(item, index) {
@@ -27,7 +32,9 @@ class MyComponent extends Component {
     ];
     return (
       <div>
-        <ReactFuzzyFilter
+        <InputFilter />
+        <div>Any amount of content between</div>
+        <FilterResults
           items={items}
           renderItem={this.renderItem}
           searchKey="meta"
@@ -37,6 +44,35 @@ class MyComponent extends Component {
   }
 }
 ```
+
+## Components
+
+# InputFilter
+
+An input field that controls the state used to render the items in `FilterResults`.
+
+## Props
+
+### classPrefix
+
+`classPrefix` is a string that is used to prefix the class names in the component. It defaults to `react-fuzzy-filter`. (`react-fuzzy-filter__input`)
+
+### initialSearch
+
+`initialSearch` is an optional string that can override the initial search state when the component is created.
+
+### inputProps
+
+`inputProps` is an object containing additional props to be passed to the input field.
+
+### onChange
+
+`onChange` is an optional callback function that is called after the value in the input field changes via an `onchange` event. If it returns `false`, the new value will not be propagated to the shared state. (returning nothing or any other return will propagate the state).
+
+
+# FilterResults
+
+Collection of fuzzy filtered items (filtered by the `InputFilter`'s value), each being rendered by the custom render function (`renderItem` prop).
 
 ## Props
 
@@ -56,34 +92,19 @@ class MyComponent extends Component {
 
 `defaultAllItems` is a boolean that determines whether all items should be shown if the search value is empty. It defaults to true (meaning all items are shown by default).
 
-### classPrefix
+#### classPrefix
 
-`classPrefix` is a string that is used to prefix the class names in the component. It defaults to `react-fuzzy-filter`. The available classes to style:
+`classPrefix` is a string that is used to prefix the class names in the component. It defaults to `react-fuzzy-filter`. (`react-fuzzy-filter__results-container`)
 
-- `react-fuzzy-filter__container`: container holding entire component
-- `react-fuzzy-filter__input`: the input field
-- `react-fuzzy-filter__items-container`: container holding all of the matching items
 
 ### initialSearch
 
 `initialSearch` is a string that can override the initial search state when the component is created. It defaults to `''`.
 
-### inputProps
+### wrapper
 
-`inputProps` is an object containing additional props to be passed to the input field.
+`wrapper` is an optional component that will wrap the results if defined. This will be used as the wrapper around the items INSTEAD of `react-fuzzy-filter__results-container`.
 
-### resultsWrapper
+### wrapperProps
 
-`resultsWrapper` is an optional component that will wrap the results if defined. This will be used as the wrapper around teh items INSTEAD of `react-fuzzy-filter__items-container`.
-
-### inputsWrapper
-
-`inputsWrapper` is an optional component that will wrap the input (`react-fuzzy-filter__input`) if defined.
-
-### resultsWrapperProps
-
-`resultsWrapperProps` is an optional object containing additional props to be passed to the `resultsWrapper`.
-
-### inputWrapperProps
-
-`inputWrapperProps` is an optional object containing additional props to be passed to the `inputWrapper`.
+`wrapperProps` is an optional object containing additional props to be passed to the `wrapper`.
