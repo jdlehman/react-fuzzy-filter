@@ -1,3 +1,7 @@
+[![npm version](https://badge.fury.io/js/react-fuzzy-filter.svg)](http://badge.fury.io/js/react-fuzzy-filter)
+[![Build Status](https://secure.travis-ci.org/jdlehman/react-fuzzy-filter.svg?branch=master)](http://travis-ci.org/jdlehman/react-fuzzy-filter)
+[![Dependency Status](https://david-dm.org/jdlehman/react-fuzzy-filter.svg)](https://david-dm.org/jdlehman/react-fuzzy-filter)
+
 # react-fuzzy-filter
 
 Fuzzy filter a list of data based on the search value typed in the input field. Each matching list item is rendered via a custom render function.
