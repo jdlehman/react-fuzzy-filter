@@ -50,7 +50,7 @@
     "webpack": "^1.13.1"
   },
   "dependencies": {
-    "fuzzysearch": "^1.0.3",
+    "fuse.js": "^2.3.0",
     "rxjs": "^5.0.0-beta.10"
   }
 }

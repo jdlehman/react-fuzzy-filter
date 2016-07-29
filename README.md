@@ -34,6 +34,9 @@ class MyComponent extends Component {
       { name: 'second', meta: 'second|443' },
       { name: 'third', meta: 'third|623' },
     ];
+    const fuseConfig = {
+      keys: ['meta']
+    };
     return (
       <div>
         <InputFilter />
@@ -41,7 +44,7 @@ class MyComponent extends Component {
         <FilterResults
           items={items}
           renderItem={this.renderItem}
-          searchKey="meta"
+          fuseConfig={fuseConfig}
         />
       </div>
     );
@@ -80,9 +83,9 @@ Collection of fuzzy filtered items (filtered by the `InputFilter`'s value), each
 
 ## Props
 
-### searchKey
+### fuseConfig
 
-`searchKey` is a string representing the key on the list item containing the metadata for matching. It defaults to `searchData`.
+`fuseConfig` is an object that specifies configuration for [`fuse.js`](https://github.com/krisk/Fuse), the library that is doing the fuzzy searching. The only required key in this object is `keys`, which is an array that specifies the key(s), in the objects to use for comparison. Check out all of the configuration [options](https://github.com/krisk/Fuse#options).
 
 ### renderItem
 

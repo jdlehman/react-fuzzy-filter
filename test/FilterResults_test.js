@@ -11,6 +11,10 @@ const items = [
   { name: 'four', searchData: 'bonjour' }
 ];
 
+const defaultFuseConfig = {
+  keys: ['searchData']
+};
+
 function defaultRender({name}, index) {
   return <div key={name} className="my-item">{name}: {index}</div>;
 }
@@ -27,7 +31,7 @@ describe('FilterResults', () => {
 
   describe('#render', () => {
     it('renders with defaults', () => {
-      const component = shallow(<FilterResults items={items} renderItem={defaultRender} />);
+      const component = shallow(<FilterResults items={items} renderItem={defaultRender} fuseConfig={defaultFuseConfig} />);
       expect(component.find('.react-fuzzy-filter__results-container').length).toEqual(1);
       expect(component.find('.my-item').length).toEqual(4);
     });
@@ -36,6 +40,7 @@ describe('FilterResults', () => {
       const component = shallow(
         <FilterResults
           items={items}
+          fuseConfig={defaultFuseConfig}
           renderItem={defaultRender}
           classPrefix="my-prefix"
         />
@@ -44,7 +49,7 @@ describe('FilterResults', () => {
     });
 
     it('is renders each item with renderItem function', () => {
-      const component = shallow(<FilterResults items={items} renderItem={defaultRender} />);
+      const component = shallow(<FilterResults items={items} renderItem={defaultRender} fuseConfig={defaultFuseConfig} />);
       expect(component.find('.my-item').length).toEqual(items.length);
       expect(component.find('.my-item').at(0).text()).toEqual('one: 0');
     });
@@ -53,6 +58,7 @@ describe('FilterResults', () => {
       const component = shallow(
         <FilterResults
           items={items}
+          fuseConfig={defaultFuseConfig}
           defaultAllItems={false}
           renderItem={defaultRender}
         />
@@ -81,6 +87,7 @@ describe('FilterResults', () => {
       const component = mount(
         <FilterResults
           items={items}
+          fuseConfig={defaultFuseConfig}
           renderItem={defaultRender}
           wrapper={WrapperComponent}
           wrapperProps={extraProps}
@@ -95,7 +102,7 @@ describe('FilterResults', () => {
 
   describe('#renderItems', () => {
     it('fuzzy filters items by search state', () => {
-      const component = shallow(<FilterResults items={items} renderItem={defaultRender} />);
+      const component = shallow(<FilterResults items={items} renderItem={defaultRender} fuseConfig={defaultFuseConfig} />);
       component.setState({search: 'hllo'});
       expect(component.find('.my-item').length).toEqual(2);
       expect(component.find('.my-item').at(0).text()).toEqual('one: 0');
@@ -105,25 +112,36 @@ describe('FilterResults', () => {
       expect(component.find('.my-item').at(0).text()).toEqual('three: 0');
     });
 
-    it('fuzzy filters based on the searchKey', () => {
+    it('accepts fuse config', () => {
+      function customRender(name) {
+        return <div key={name} className="my-item">{name}</div>;
+      }
+      customRender.propTypes = {
+        name: PropTypes.string.isRequired
+      };
+      const fuseConfig = {
+        keys: ['name'],
+        id: 'name'
+      };
       const component = shallow(
         <FilterResults
+          fuseConfig={fuseConfig}
           items={items}
-          renderItem={defaultRender}
-          searchKey="name"
+          renderItem={customRender}
         />
       );
       component.setState({search: 'hllo'});
       expect(component.find('.my-item').length).toEqual(0);
 
-      component.setState({search: 'ne'});
+      component.setState({search: 'ree'});
       expect(component.find('.my-item').length).toEqual(1);
-      expect(component.find('.my-item').at(0).text()).toEqual('one: 0');
+      expect(component.find('.my-item').at(0).text()).toEqual('three');
     });
 
     it('can override the initial search value with initialSearch prop', () => {
       const component = shallow(
         <FilterResults
+          fuseConfig={defaultFuseConfig}
           items={items}
           renderItem={defaultRender}
           initialSearch="hello"

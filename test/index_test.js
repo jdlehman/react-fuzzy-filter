@@ -10,6 +10,10 @@ const items = [
   { name: 'four', searchData: 'bonjour' }
 ];
 
+const defaultFuseConfig = {
+  keys: ['searchData']
+};
+
 describe('fuzzyFilterFactory', () => {
   it('returns FilterResults and InputFilter components', () => {
     const {InputFilter, FilterResults} = fuzzyFilterFactory();
@@ -29,6 +33,7 @@ describe('fuzzyFilterFactory', () => {
           <h4>Any amount of content between</h4>
           <FilterResults
             items={items}
+            fuseConfig={defaultFuseConfig}
             renderItem={defaultRender}
           />
         </div>

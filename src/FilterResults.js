@@ -1,23 +1,37 @@
 import React, {PropTypes, Component} from 'react';
-import fuzzysearch from 'fuzzysearch';
+import Fuse from 'fuse.js';
 
 export default function filterResultsFactory(store) {
   class FilterResults extends Component {
     static displayName = 'FilterResults';
 
     static propTypes = {
-      searchKey: PropTypes.string.isRequired,
       renderItem: PropTypes.func.isRequired,
       items: PropTypes.array.isRequired,
       defaultAllItems: PropTypes.bool,
       classPrefix: PropTypes.string,
       wrapper: PropTypes.any,
       wrapperProps: PropTypes.object,
-      initialSearch: PropTypes.string
+      initialSearch: PropTypes.string,
+      fuseConfig: PropTypes.shape({
+        keys: PropTypes.array.isRequired,
+        id: PropTypes.string,
+        caseSensitive: PropTypes.bool,
+        shouldSort: PropTypes.bool,
+        searchFn: PropTypes.func,
+        getFn: PropTypes.func,
+        sortFn: PropTypes.func,
+        location: PropTypes.number,
+        threshold: PropTypes.number,
+        distance: PropTypes.number,
+        maxPatternLength: PropTypes.number,
+        verbose: PropTypes.bool,
+        tokenize: PropTypes.bool,
+        tokenSeparator: PropTypes.any
+      }).isRequired
     };
 
     static defaultProps = {
-      searchKey: 'searchData',
       defaultAllItems: true,
       classPrefix: 'react-fuzzy-filter',
       wrapperProps: {},
@@ -25,11 +39,16 @@ export default function filterResultsFactory(store) {
     };
 
     state = {
-      search: this.props.initialSearch
+      search: this.props.initialSearch,
+      fuse: new Fuse(this.props.items, this.props.fuseConfig)
     };
 
     componentDidMount() {
       this.subscription = store.subscribe(search => this.setState({search}));
+    }
+
+    componentWillReceiveProps({items, fuseConfig}) {
+      this.setState({fuse: new Fuse(items, fuseConfig)});
     }
 
     componentWillUnmount() {
@@ -37,17 +56,13 @@ export default function filterResultsFactory(store) {
     }
 
     renderItems() {
-      return this.props.items
-        .filter(item => {
-          if (this.state.search === '') {
-            return this.props.defaultAllItems;
-          } else if (!item[this.props.searchKey]) {
-            return false;
-          } else {
-            return fuzzysearch(this.state.search, item[this.props.searchKey]);
-          }
-        })
-        .map((item, i) => this.props.renderItem(item, i));
+      let items;
+      if (!this.state.search || this.state.search.trim() === '') {
+        items = this.props.defaultAllItems ? this.props.items : [];
+      } else {
+        items = this.state.fuse.search(this.state.search);
+      }
+      return items.map((item, i) => this.props.renderItem(item, i));
     }
 
     render() {
