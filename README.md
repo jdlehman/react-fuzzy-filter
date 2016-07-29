@@ -6,6 +6,8 @@
 
 Fuzzy filter a list of data based on the search value typed in the input field. Each matching list item is rendered via a custom render function.
 
+ReactFuzzyFilter is powered by [`fuse.js`](https://github.com/krisk/Fuse).
+
 ## Installation
 
 ```sh
