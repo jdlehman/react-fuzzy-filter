@@ -76,7 +76,7 @@ An input field that controls the state used to render the items in `FilterResult
 
 ### onChange
 
-`onChange` is an optional callback function that is called after the value in the input field changes via an `onchange` event. If it returns `false`, the new value will not be propagated to the shared state. (returning nothing or any other return will propagate the state).
+`onChange` is an optional callback function that is called BEFORE the value in the input field changes via an `onchange` event. If it returns `false`, the new value will not be propagated to the shared state. (returning nothing or any other return will propagate the state).
 
 
 # FilterResults
