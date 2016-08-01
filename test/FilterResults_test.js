@@ -98,6 +98,31 @@ describe('FilterResults', () => {
       expect(component.find('.wrapper').find('.my-item').length).toEqual(4);
       expect(component.find('.wrapper').find('.wrapper__val').text()).toEqual('hello');
     });
+
+    it('allows renderContainer function to describe how container will be rendered', () => {
+      function renderContainer(items) {
+        return (
+          <div className="wrapper">
+            <div className="wrapper-before" />
+            {items}
+            <div className="wrapper-after" />
+          </div>
+        );
+      }
+      const component = mount(
+        <FilterResults
+          items={items}
+          fuseConfig={defaultFuseConfig}
+          renderItem={defaultRender}
+          renderContainer={renderContainer}
+        />
+      );
+      expect(component.find('.wrapper').length).toEqual(1);
+      expect(component.find('.wrapper').find('.react-fuzzy-filter__results-container').length).toEqual(0);
+      expect(component.find('.wrapper').find('.my-item').length).toEqual(4);
+      expect(component.find('.wrapper').find('.wrapper-before').length).toEqual(1);
+      expect(component.find('.wrapper').find('.wrapper-after').length).toEqual(1);
+    });
   });
 
   describe('#renderItems', () => {

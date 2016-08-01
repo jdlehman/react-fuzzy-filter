@@ -13,6 +13,7 @@ export default function filterResultsFactory(store) {
       wrapper: PropTypes.any,
       wrapperProps: PropTypes.object,
       initialSearch: PropTypes.string,
+      renderContainer: PropTypes.func,
       fuseConfig: PropTypes.shape({
         keys: PropTypes.array.isRequired,
         id: PropTypes.string,
@@ -67,15 +68,17 @@ export default function filterResultsFactory(store) {
 
     render() {
       const items = this.renderItems();
+      if (typeof this.props.renderContainer === 'function') {
+        return this.props.renderContainer(items);
+      }
       if (this.props.wrapper) {
         return React.createElement(this.props.wrapper, this.props.wrapperProps, items);
-      } else {
-        return (
-          <span className={`${this.props.classPrefix}__results-container`}>
-            {items}
-          </span>
-        );
       }
+      return (
+        <span className={`${this.props.classPrefix}__results-container`}>
+          {items}
+        </span>
+      );
     }
   }
 
