@@ -162,17 +162,5 @@ describe('FilterResults', () => {
       expect(component.find('.my-item').length).toEqual(1);
       expect(component.find('.my-item').at(0).text()).toEqual('three');
     });
-
-    it('can override the initial search value with initialSearch prop', () => {
-      const component = shallow(
-        <FilterResults
-          fuseConfig={defaultFuseConfig}
-          items={items}
-          renderItem={defaultRender}
-          initialSearch="hello"
-        />
-      );
-      expect(component.find('.my-item').length).toEqual(2);
-    });
   });
 });

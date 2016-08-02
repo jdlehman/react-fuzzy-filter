@@ -32,12 +32,12 @@ class MyComponent extends Component {
 
   render() {
     const items = [
-      { name: 'first', meta: 'first|123' },
-      { name: 'second', meta: 'second|443' },
-      { name: 'third', meta: 'third|623' },
+      { name: 'first', meta: 'first|123', tag: 'a' },
+      { name: 'second', meta: 'second|443', tag: 'b' },
+      { name: 'third', meta: 'third|623', tag: 'a' },
     ];
     const fuseConfig = {
-      keys: ['meta']
+      keys: ['meta', 'tag']
     };
     return (
       <div>
@@ -76,7 +76,7 @@ An input field that controls the state used to render the items in `FilterResult
 
 ### onChange
 
-`onChange` is an optional callback function that is called BEFORE the value in the input field changes via an `onchange` event. If it returns `false`, the new value will not be propagated to the shared state. (returning nothing or any other return will propagate the state).
+`onChange` is an optional callback function that is called BEFORE the value in the input field changes via an `onchange` event. It can optionally return a string, which will then be passed directly to `FilterResults` rather than the original string. This can be used to filter out special inputs (eg: `author:jdlehman`) from fuzzy searching. These special inputs could then be used to change the `items` being passed to `FilterResults`.
 
 
 # FilterResults
@@ -104,11 +104,6 @@ Collection of fuzzy filtered items (filtered by the `InputFilter`'s value), each
 #### classPrefix
 
 `classPrefix` is a string that is used to prefix the class names in the component. It defaults to `react-fuzzy-filter`. (`react-fuzzy-filter__results-container`)
-
-
-### initialSearch
-
-`initialSearch` is a string that can override the initial search state when the component is created. It defaults to `''`.
 
 ### wrapper
 

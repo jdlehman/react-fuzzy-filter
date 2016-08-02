@@ -17,16 +17,21 @@ export default function inputFilterFactory(store) {
       onChange: function() {}
     };
 
-    state = {
-      search: this.props.initialSearch
-    };
+    componentDidMount() {
+      let value = this.props.initialSearch;
+      const overrideValue = this.props.onChange(value);
+      if (typeof overrideValue === 'string') {
+        value = overrideValue;
+      }
+      store.next(value);
+    }
 
     handleChange = ({target: {value}}) => {
-      const continueChange = this.props.onChange(value);
-      if (continueChange !== false) {
-        this.setState({search: value});
-        store.next(value);
+      const overrideValue = this.props.onChange(value);
+      if (typeof overrideValue === 'string') {
+        value = overrideValue;
       }
+      store.next(value);
     };
 
     render() {

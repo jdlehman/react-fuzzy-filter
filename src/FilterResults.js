@@ -12,7 +12,6 @@ export default function filterResultsFactory(store) {
       classPrefix: PropTypes.string,
       wrapper: PropTypes.any,
       wrapperProps: PropTypes.object,
-      initialSearch: PropTypes.string,
       renderContainer: PropTypes.func,
       fuseConfig: PropTypes.shape({
         keys: PropTypes.array.isRequired,
@@ -35,35 +34,32 @@ export default function filterResultsFactory(store) {
     static defaultProps = {
       defaultAllItems: true,
       classPrefix: 'react-fuzzy-filter',
-      wrapperProps: {},
-      initialSearch: ''
+      wrapperProps: {}
     };
 
     state = {
-      search: this.props.initialSearch,
-      fuse: new Fuse(this.props.items, this.props.fuseConfig)
+      search: null
     };
 
     componentDidMount() {
       this.subscription = store.subscribe(search => this.setState({search}));
     }
 
-    componentWillReceiveProps({items, fuseConfig}) {
-      this.setState({fuse: new Fuse(items, fuseConfig)});
-    }
-
     componentWillUnmount() {
       this.subscription.unsubscribe();
     }
 
-    renderItems() {
-      let items;
+    filterItems() {
       if (!this.state.search || this.state.search.trim() === '') {
-        items = this.props.defaultAllItems ? this.props.items : [];
+        return this.props.defaultAllItems ? this.props.items : [];
       } else {
-        items = this.state.fuse.search(this.state.search);
+        const fuse = new Fuse(this.props.items, this.props.fuseConfig);
+        return fuse.search(this.state.search);
       }
-      return items.map((item, i) => this.props.renderItem(item, i));
+    }
+
+    renderItems() {
+      return this.filterItems().map((item, i) => this.props.renderItem(item, i));
     }
 
     render() {
