@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.0 (2016-8-3)
+
+Added:
+
+- `renderContainer` callback function on `FilterResults` receives a second argument with the raw filtered items. [commit](../../4f7552f)
+
 ## 2.0.0 (2016-8-2)
 
 Changed:
