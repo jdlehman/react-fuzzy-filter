@@ -58,14 +58,15 @@ export default function filterResultsFactory(store) {
       }
     }
 
-    renderItems() {
-      return this.filterItems().map((item, i) => this.props.renderItem(item, i));
+    renderItems(items) {
+      return items.map((item, i) => this.props.renderItem(item, i));
     }
 
     render() {
-      const items = this.renderItems();
+      const rawItems = this.filterItems();
+      const items = this.renderItems(rawItems);
       if (typeof this.props.renderContainer === 'function') {
-        return this.props.renderContainer(items);
+        return this.props.renderContainer(items, rawItems);
       }
       if (this.props.wrapper) {
         return React.createElement(this.props.wrapper, this.props.wrapperProps, items);

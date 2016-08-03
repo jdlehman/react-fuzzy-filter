@@ -115,4 +115,4 @@ Collection of fuzzy filtered items (filtered by the `InputFilter`'s value), each
 
 ### renderContainer
 
-`renderContainer` is an alternative to using `wrapper` and `wrapperProps`. It is a function that is used as the render function for `FilterResults`. It receives an array of React elements (the items after they have already been transformed by `renderItem`, and should return a React element.
+`renderContainer` is an alternative to using `wrapper` and `wrapperProps`. It is a function that is used as the render function for `FilterResults`. It receives two arguments, an array of React elements (the items after they have already been transformed by `renderItem`, as well as an array of the raw items. It should return a React element.

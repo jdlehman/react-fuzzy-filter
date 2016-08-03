@@ -109,14 +109,19 @@ describe('FilterResults', () => {
           </div>
         );
       }
+      let filteredItems;
       const component = mount(
         <FilterResults
           items={items}
           fuseConfig={defaultFuseConfig}
           renderItem={defaultRender}
-          renderContainer={renderContainer}
+          renderContainer={(items, rawItems) => {
+            filteredItems = rawItems;
+            return renderContainer(items);
+          }}
         />
       );
+      expect(filteredItems).toEqual(items);
       expect(component.find('.wrapper').length).toEqual(1);
       expect(component.find('.wrapper').find('.react-fuzzy-filter__results-container').length).toEqual(0);
       expect(component.find('.wrapper').find('.my-item').length).toEqual(4);
