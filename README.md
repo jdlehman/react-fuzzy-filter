@@ -116,3 +116,39 @@ Collection of fuzzy filtered items (filtered by the `InputFilter`'s value), each
 ### renderContainer
 
 `renderContainer` is an alternative to using `wrapper` and `wrapperProps`. It is a function that is used as the render function for `FilterResults`. It receives two arguments, an array of React elements (the items after they have already been transformed by `renderItem`, as well as an array of the raw items. It should return a React element.
+
+### prefilters
+
+`prefilters` is an optional array of objects defining how to prefilter the items before they are handed off for fuzzy searching. Each object must have a `regex` key with a regular expression and a `handler` key with a callback function. Each regex match for a prefilter, will cause the corresponding handler to be called. The handler function receives the match as a string, the array of items (might be a subset if another prefilter has already happened), and the Fuse constructor function. The handler must return an array of items (probably a subset of what was passed in).
+
+It is important to note that each match is stripped out of the search string that will be passed to the final fuzzy filtering with Fuse (after all matching prefilters have been run). This enables "commands" or special keywords to be used to filter the items, but not be used in the fuzzy search itself. Example: `author:jdlehman` might filter all the items that are authored by `jdlehman`, but the string `author:jdlehman` is not used to fuzzy search the filtered items. So a search with `author:jdlehman mySearch` could filter out all items that are not authored by `jdlehman` and then fuzzy search the remaining items with just `mySearch`.
+
+The author prefilter described above might look like the following:
+
+```js
+const prefilters = [
+  {
+    regex: /author:\S+/g,
+    handler: (match, items, Fuse) => {
+      const name = match.split(':')[1];
+      return items.filter(item => item.author === name);
+    }
+  }
+];
+```
+
+We could also define a prefilter to fuzzy search on a different key then our default Fuse config. Example: `name:Bob` would fuzzy filter for `Bob` on the `name` key.
+
+
+```js
+const prefilters = [
+  {
+    regex: /\S+:\S+/g,
+    handler: (match, items, Fuse) => {
+      const [key, value] = match.split(':');
+      const fuse = new Fuse(items, {keys: [key]});
+      return fuse.search(value);
+    }
+  }
+];
+```

@@ -5,10 +5,10 @@ import {Subject} from 'rxjs/Subject';
 import filterResultsFactory from '../src/FilterResults';
 
 const items = [
-  { name: 'one', searchData: 'hello' },
-  { name: 'two', searchData: 'hello' },
-  { name: 'three', searchData: 'goodbye' },
-  { name: 'four', searchData: 'bonjour' }
+  { name: 'one', searchData: 'hello', state: 'archived' },
+  { name: 'two', searchData: 'hello', state: '' },
+  { name: 'three', searchData: 'goodbye', state: 'archived' },
+  { name: 'four', searchData: 'bonjour', state: 'enabled' }
 ];
 
 const defaultFuseConfig = {
@@ -166,6 +166,42 @@ describe('FilterResults', () => {
       component.setState({search: 'ree'});
       expect(component.find('.my-item').length).toEqual(1);
       expect(component.find('.my-item').at(0).text()).toEqual('three');
+    });
+
+    it('supports prefilters', () => {
+      const prefilters = [
+        {
+          regex: /archived/,
+          handler: (filterVal, items) => {
+            return items.filter(item => item.state === 'archived');
+          }
+        },
+        {
+          regex: /\S+:\S+/g,
+          handler: function(match, items, Fuse) {
+            const [key, value] = match.split(':');
+            const fuse = new Fuse(items, {keys: [key], threshold: 0.4});
+            return fuse.search(value);
+          }
+        }
+      ];
+      const component = shallow(
+        <FilterResults
+          fuseConfig={defaultFuseConfig}
+          items={items}
+          renderItem={defaultRender}
+          prefilters={prefilters}
+        />
+      );
+      component.setState({search: 'archived'});
+      expect(component.find('.my-item').length).toEqual(2);
+      component.setState({search: 'archived hello'});
+      expect(component.find('.my-item').length).toEqual(1);
+      expect(component.find('.my-item').at(0).text()).toEqual('one: 0');
+
+      component.setState({search: 'name:two'});
+      expect(component.find('.my-item').length).toEqual(1);
+      expect(component.find('.my-item').at(0).text()).toEqual('two: 0');
     });
   });
 });

@@ -28,13 +28,20 @@ export default function filterResultsFactory(store) {
         verbose: PropTypes.bool,
         tokenize: PropTypes.bool,
         tokenSeparator: PropTypes.any
-      }).isRequired
+      }).isRequired,
+      prefilters: PropTypes.arrayOf(
+        PropTypes.shape({
+          regex: PropTypes.any.isRequired,
+          handler: PropTypes.func.isRequired
+        }).isRequired
+      ).isRequired
     };
 
     static defaultProps = {
       defaultAllItems: true,
       classPrefix: 'react-fuzzy-filter',
-      wrapperProps: {}
+      wrapperProps: {},
+      prefilters: []
     };
 
     state = {
@@ -49,12 +56,25 @@ export default function filterResultsFactory(store) {
       this.subscription.unsubscribe();
     }
 
+    prefilterItems(search) {
+      let items = this.props.items;
+      this.props.prefilters.forEach(({regex, handler}) => {
+        const matches = search.match(regex) || [];
+        search = search.replace(regex, '').trim();
+        matches.forEach(match => {
+          items = handler(match, items, Fuse);
+        });
+      });
+      return {items, search};
+    }
+
     filterItems() {
-      if (!this.state.search || this.state.search.trim() === '') {
-        return this.props.defaultAllItems ? this.props.items : [];
+      const {items, search} = this.prefilterItems(this.state.search || '');
+      if (search.trim() === '') {
+        return this.props.defaultAllItems ? items : [];
       } else {
-        const fuse = new Fuse(this.props.items, this.props.fuseConfig);
-        return fuse.search(this.state.search);
+        const fuse = new Fuse(items, this.props.fuseConfig);
+        return fuse.search(search);
       }
     }
 
