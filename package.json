@@ -1,6 +1,6 @@
 {
   "name": "react-fuzzy-filter",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Render a subset of a collection with fuzzy searching",
   "main": "dist/react-fuzzy-filter.min.js",
   "scripts": {
