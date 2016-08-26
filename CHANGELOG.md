@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0 (2016-8-26)
+
+Added:
+
+- Added `prefilters` prop to `FilterResults`. Enables prefiltering the items on matching regular expressions. The return of the callback is the list of items to fuzzy search on. This enables "commands" that toggle state or change what is being fuzzy searched on. [bb7d688](../../commit)
+
 ## 2.1.0 (2016-8-3)
 
 Added:
