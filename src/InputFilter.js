@@ -1,6 +1,15 @@
 import React, {PropTypes, Component} from 'react';
+import debounce from 'debounce';
 
 export default function inputFilterFactory(store) {
+  function updateValue(value, callback) {
+    const overrideValue = callback(value);
+    if (typeof overrideValue === 'string') {
+      value = overrideValue;
+    }
+    store.next(value);
+  }
+
   class InputFilter extends Component {
     static displayName = 'InputFilter';
 
@@ -8,30 +17,33 @@ export default function inputFilterFactory(store) {
       classPrefix: PropTypes.string.isRequired,
       initialSearch: PropTypes.string,
       inputProps: PropTypes.object,
-      onChange: PropTypes.func
+      onChange: PropTypes.func,
+      debounceTime: PropTypes.number
     };
 
     static defaultProps = {
       classPrefix: 'react-fuzzy-filter',
       inputProps: {},
-      onChange: function() {}
+      onChange: function() {},
+      debounceTime: 0
     };
 
     componentDidMount() {
-      let value = this.props.initialSearch;
-      const overrideValue = this.props.onChange(value);
-      if (typeof overrideValue === 'string') {
-        value = overrideValue;
-      }
-      store.next(value);
+      updateValue(this.props.initialSearch, this.props.onChange);
     }
 
+    componentWillReceiveProps(nextProps) {
+      this.updateValue = debounce(updateValue, nextProps.debounceTime);
+    }
+
+    updateValue = debounce(updateValue, this.props.debounceTime);
+
     handleChange = ({target: {value}}) => {
-      const overrideValue = this.props.onChange(value);
-      if (typeof overrideValue === 'string') {
-        value = overrideValue;
+      if (this.props.debounceTime > 0) {
+        this.updateValue(value, this.props.onChange);
+      } else {
+        updateValue(value, this.props.onChange);
       }
-      store.next(value);
     };
 
     render() {
