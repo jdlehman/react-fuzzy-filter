@@ -1,6 +1,6 @@
 import expect from 'expect';
 import {mount} from 'enzyme';
-import React, {PropTypes} from 'react';
+import React, { } from 'react';
 import fuzzyFilterFactory from '../src';
 
 const items = [
@@ -14,14 +14,7 @@ const defaultFuseConfig = {
   keys: ['searchData']
 };
 
-function defaultRender({name}, index) {
-  return <div key={name} className="my-item">{name}: {index}</div>;
-}
-defaultRender.propTypes = {
-  name: PropTypes.string.isRequired
-};
-
-function componentFactory(inputFilterProps, filterResultsProps) {
+function componentFactory(inputFilterProps, filterResultsProps, resultsSpy) {
   const {InputFilter, FilterResults} = fuzzyFilterFactory();
   function MyComponent() {
     return (
@@ -29,7 +22,9 @@ function componentFactory(inputFilterProps, filterResultsProps) {
         <h2>Separate Components</h2>
         <InputFilter {...inputFilterProps} />
         <h4>Any amount of content between</h4>
-        <FilterResults {...filterResultsProps} />
+        <FilterResults {...filterResultsProps}>
+          {resultsSpy}
+        </FilterResults>
       </div>
     );
   }
@@ -38,6 +33,11 @@ function componentFactory(inputFilterProps, filterResultsProps) {
 }
 
 describe('fuzzyFilterFactory', () => {
+  let resultsSpy;
+  beforeEach(() => {
+    resultsSpy = expect.createSpy().andReturn(<div />);
+  });
+
   it('returns FilterResults and InputFilter components', () => {
     const {InputFilter, FilterResults} = fuzzyFilterFactory();
     expect(typeof InputFilter).toEqual('function');
@@ -49,30 +49,46 @@ describe('fuzzyFilterFactory', () => {
   it('input controls filter results', () => {
     const MyComponent = componentFactory(
       {placeholder: 'Search'},
-      {items: items, fuseConfig: defaultFuseConfig, renderItem: defaultRender}
+      {items: items, fuseConfig: defaultFuseConfig},
+      resultsSpy
     );
     const component = mount(<MyComponent />);
-    expect(component.find('.react-fuzzy-filter__results-container').length).toEqual(1);
-    expect(component.find('.my-item').length).toEqual(4);
+    expect(resultsSpy.calls.length).toEqual(2);
+    expect(resultsSpy.calls[1].arguments[0]).toEqual([
+      { name: 'one', searchData: 'hello' },
+      { name: 'two', searchData: 'hello' },
+      { name: 'three', searchData: 'goodbye' },
+      { name: 'four', searchData: 'bonjour' }
+    ]);
 
     component.find('input').simulate('change', {
       target: {value: 'ello'}
     });
-    expect(component.find('.my-item').length).toEqual(2);
+    expect(resultsSpy.calls.length).toEqual(3);
+    expect(resultsSpy.calls[2].arguments[0]).toEqual([
+      { name: 'one', searchData: 'hello' },
+      { name: 'two', searchData: 'hello' }
+    ]);
 
     component.find('input').simulate('change', {
       target: {value: 'gdbye'}
     });
-    expect(component.find('.my-item').length).toEqual(1);
+    expect(resultsSpy.calls.length).toEqual(4);
+    expect(resultsSpy.calls[3].arguments[0]).toEqual([
+      { name: 'three', searchData: 'goodbye' }
+    ]);
   });
 
   it('uses initialSearch', () => {
     const MyComponent = componentFactory(
       {placeholder: 'Search', initialSearch: 'gdbye'},
-      {items: items, fuseConfig: defaultFuseConfig, renderItem: defaultRender}
+      {items: items, fuseConfig: defaultFuseConfig},
+      resultsSpy
     );
-    const component = mount(<MyComponent />);
-    expect(component.find('.react-fuzzy-filter__results-container').length).toEqual(1);
-    expect(component.find('.my-item').length).toEqual(1);
+    mount(<MyComponent />);
+    expect(resultsSpy.calls.length).toEqual(2);
+    expect(resultsSpy.calls[1].arguments[0]).toEqual([
+      { name: 'three', searchData: 'goodbye' }
+    ]);
   });
 });
