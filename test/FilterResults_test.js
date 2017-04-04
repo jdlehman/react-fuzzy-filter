@@ -1,8 +1,10 @@
 import expect from 'expect';
 import {shallow, mount} from 'enzyme';
-import React, {PropTypes} from 'react';
+import React, { } from 'react';
 import {Subject} from 'rxjs/Subject';
 import filterResultsFactory from '../src/FilterResults';
+
+const filteredResultsSpy = expect.createSpy().andReturn(<div />);
 
 const items = [
   { name: 'one', searchData: 'hello', state: 'archived' },
@@ -15,43 +17,19 @@ const defaultFuseConfig = {
   keys: ['searchData']
 };
 
-function defaultRender({name}, index) {
-  return <div key={name} className="my-item">{name}: {index}</div>;
-}
-defaultRender.propTypes = {
-  name: PropTypes.string.isRequired
-};
-
 describe('FilterResults', () => {
   let FilterResults;
   const store = new Subject();
   beforeEach(() => {
     FilterResults = filterResultsFactory(store);
+    filteredResultsSpy.reset();
   });
 
   describe('#render', () => {
-    it('renders with defaults', () => {
-      const component = shallow(<FilterResults items={items} renderItem={defaultRender} fuseConfig={defaultFuseConfig} />);
-      expect(component.find('.react-fuzzy-filter__results-container').length).toEqual(1);
-      expect(component.find('.my-item').length).toEqual(4);
-    });
-
-    it('sets classPrefix', () => {
-      const component = shallow(
-        <FilterResults
-          items={items}
-          fuseConfig={defaultFuseConfig}
-          renderItem={defaultRender}
-          classPrefix="my-prefix"
-        />
-      );
-      expect(component.find('.my-prefix__results-container').length).toEqual(1);
-    });
-
-    it('is renders each item with renderItem function', () => {
-      const component = shallow(<FilterResults items={items} renderItem={defaultRender} fuseConfig={defaultFuseConfig} />);
-      expect(component.find('.my-item').length).toEqual(items.length);
-      expect(component.find('.my-item').at(0).text()).toEqual('one: 0');
+    it('passes filtered items to child function', () => {
+      const component = shallow(<FilterResults items={items} fuseConfig={defaultFuseConfig}>{filteredResultsSpy}</FilterResults>);
+      expect(filteredResultsSpy.calls.length).toEqual(1);
+      expect(filteredResultsSpy.calls[0].arguments[0]).toEqual(items);
     });
 
     it('renders no items with empty search if defaultAllItems is false', () => {
@@ -59,96 +37,28 @@ describe('FilterResults', () => {
         <FilterResults
           items={items}
           fuseConfig={defaultFuseConfig}
-          defaultAllItems={false}
-          renderItem={defaultRender}
-        />
+          defaultAllItems={false}>
+          {filteredResultsSpy}
+        </FilterResults>
       );
-      expect(component.find('.my-item').length).toEqual(0);
-    });
-
-    it('allows wrapper and wrapper props', () => {
-      function WrapperComponent({children, value}) {
-        return (
-          <div className="wrapper">
-            <span className="wrapper__val">{value}</span>
-            {children}
-          </div>
-        );
-      };
-
-      WrapperComponent.propTypes = {
-        children: PropTypes.any,
-        value: PropTypes.string
-      };
-
-      const extraProps = {
-        value: 'hello'
-      };
-      const component = mount(
-        <FilterResults
-          items={items}
-          fuseConfig={defaultFuseConfig}
-          renderItem={defaultRender}
-          wrapper={WrapperComponent}
-          wrapperProps={extraProps}
-        />
-      );
-      expect(component.find('.wrapper').length).toEqual(1);
-      expect(component.find('.wrapper').find('.react-fuzzy-filter__results-container').length).toEqual(0);
-      expect(component.find('.wrapper').find('.my-item').length).toEqual(4);
-      expect(component.find('.wrapper').find('.wrapper__val').text()).toEqual('hello');
-    });
-
-    it('allows renderContainer function to describe how container will be rendered', () => {
-      function renderContainer(items) {
-        return (
-          <div className="wrapper">
-            <div className="wrapper-before" />
-            {items}
-            <div className="wrapper-after" />
-          </div>
-        );
-      }
-      let filteredItems;
-      const component = mount(
-        <FilterResults
-          items={items}
-          fuseConfig={defaultFuseConfig}
-          renderItem={defaultRender}
-          renderContainer={(items, rawItems) => {
-            filteredItems = rawItems;
-            return renderContainer(items);
-          }}
-        />
-      );
-      expect(filteredItems).toEqual(items);
-      expect(component.find('.wrapper').length).toEqual(1);
-      expect(component.find('.wrapper').find('.react-fuzzy-filter__results-container').length).toEqual(0);
-      expect(component.find('.wrapper').find('.my-item').length).toEqual(4);
-      expect(component.find('.wrapper').find('.wrapper-before').length).toEqual(1);
-      expect(component.find('.wrapper').find('.wrapper-after').length).toEqual(1);
+      expect(filteredResultsSpy.calls.length).toEqual(1);
+      expect(filteredResultsSpy.calls[0].arguments[0]).toEqual([]);
     });
   });
 
   describe('#renderItems', () => {
     it('fuzzy filters items by search state', () => {
-      const component = shallow(<FilterResults items={items} renderItem={defaultRender} fuseConfig={defaultFuseConfig} />);
+      const component = shallow(<FilterResults items={items} fuseConfig={defaultFuseConfig}>{filteredResultsSpy}</FilterResults>);
       component.setState({search: 'hllo'});
-      expect(component.find('.my-item').length).toEqual(2);
-      expect(component.find('.my-item').at(0).text()).toEqual('one: 0');
+      expect(filteredResultsSpy.calls.length).toEqual(2);
+      expect(filteredResultsSpy.calls[1].arguments[0]).toEqual([{ name: 'one', searchData: 'hello', state: 'archived' }, { name: 'two', searchData: 'hello', state: '' }]);
 
       component.setState({search: 'godby'});
-      expect(component.find('.my-item').length).toEqual(1);
-      expect(component.find('.my-item').at(0).text()).toEqual('three: 0');
+      expect(filteredResultsSpy.calls.length).toEqual(3);
+      expect(filteredResultsSpy.calls[2].arguments[0]).toEqual([{ name: 'three', searchData: 'goodbye', state: 'archived' }]);
     });
 
     it('accepts fuse config', () => {
-      function customRender(name) {
-        return <div key={name} className="my-item">{name}</div>;
-      }
-      customRender.propTypes = {
-        name: PropTypes.string.isRequired
-      };
       const fuseConfig = {
         keys: ['name'],
         id: 'name'
@@ -156,16 +66,17 @@ describe('FilterResults', () => {
       const component = shallow(
         <FilterResults
           fuseConfig={fuseConfig}
-          items={items}
-          renderItem={customRender}
-        />
+          items={items}>
+          {filteredResultsSpy}
+        </FilterResults>
       );
       component.setState({search: 'hllo'});
-      expect(component.find('.my-item').length).toEqual(0);
+      expect(filteredResultsSpy.calls.length).toEqual(2);
+      expect(filteredResultsSpy.calls[1].arguments[0]).toEqual([]);
 
       component.setState({search: 'ree'});
-      expect(component.find('.my-item').length).toEqual(1);
-      expect(component.find('.my-item').at(0).text()).toEqual('three');
+      expect(filteredResultsSpy.calls.length).toEqual(3);
+      expect(filteredResultsSpy.calls[2].arguments[0]).toEqual(['three']);
     });
 
     it('supports prefilters', () => {
@@ -189,19 +100,21 @@ describe('FilterResults', () => {
         <FilterResults
           fuseConfig={defaultFuseConfig}
           items={items}
-          renderItem={defaultRender}
-          prefilters={prefilters}
-        />
+          prefilters={prefilters}>
+          {filteredResultsSpy}
+        </FilterResults>
       );
       component.setState({search: 'archived'});
-      expect(component.find('.my-item').length).toEqual(2);
+      expect(filteredResultsSpy.calls.length).toEqual(2);
+      expect(filteredResultsSpy.calls[1].arguments[0]).toEqual([{ name: 'one', searchData: 'hello', state: 'archived' }, { name: 'three', searchData: 'goodbye', state: 'archived' }]);
+
       component.setState({search: 'archived hello'});
-      expect(component.find('.my-item').length).toEqual(1);
-      expect(component.find('.my-item').at(0).text()).toEqual('one: 0');
+      expect(filteredResultsSpy.calls.length).toEqual(3);
+      expect(filteredResultsSpy.calls[2].arguments[0]).toEqual([{ name: 'one', searchData: 'hello', state: 'archived' }]);
 
       component.setState({search: 'name:two'});
-      expect(component.find('.my-item').length).toEqual(1);
-      expect(component.find('.my-item').at(0).text()).toEqual('two: 0');
+      expect(filteredResultsSpy.calls.length).toEqual(4);
+      expect(filteredResultsSpy.calls[3].arguments[0]).toEqual([{ name: 'two', searchData: 'hello', state: '' }]);
     });
   });
 });
