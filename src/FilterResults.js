@@ -1,4 +1,4 @@
-import React, {PropTypes, Component} from 'react';
+import {PropTypes, Component} from 'react';
 import Fuse from 'fuse.js';
 
 export default function filterResultsFactory(store) {

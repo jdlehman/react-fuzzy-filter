@@ -1,5 +1,5 @@
 import expect from 'expect';
-import {shallow, mount} from 'enzyme';
+import {shallow} from 'enzyme';
 import React, { } from 'react';
 import {Subject} from 'rxjs/Subject';
 import filterResultsFactory from '../src/FilterResults';
@@ -27,13 +27,13 @@ describe('FilterResults', () => {
 
   describe('#render', () => {
     it('passes filtered items to child function', () => {
-      const component = shallow(<FilterResults items={items} fuseConfig={defaultFuseConfig}>{filteredResultsSpy}</FilterResults>);
+      shallow(<FilterResults items={items} fuseConfig={defaultFuseConfig}>{filteredResultsSpy}</FilterResults>);
       expect(filteredResultsSpy.calls.length).toEqual(1);
       expect(filteredResultsSpy.calls[0].arguments[0]).toEqual(items);
     });
 
     it('renders no items with empty search if defaultAllItems is false', () => {
-      const component = shallow(
+      shallow(
         <FilterResults
           items={items}
           fuseConfig={defaultFuseConfig}
