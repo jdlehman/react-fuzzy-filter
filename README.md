@@ -4,7 +4,7 @@
 
 # react-fuzzy-filter
 
-Fuzzy filter a list of data based on the search value typed in the input field. Each matching list item is rendered via a custom render function.
+Fuzzy filter a list of data based on the search value typed in the input field. Each matching list item is made available as an argument to the FilterResults component's child function.
 
 ReactFuzzyFilter is powered by [`fuse.js`](https://github.com/krisk/Fuse).
 
@@ -26,10 +26,6 @@ import fuzzyFilterFactory from 'react-fuzzy-filter';
 const {InputFilter, FilterResults} = fuzzyFilterFactory();
 
 class MyComponent extends Component {
-  renderItem(item, index) {
-    return <div key={item.meta}>{item.name}</div>;
-  }
-
   render() {
     const items = [
       { name: 'first', meta: 'first|123', tag: 'a' },
@@ -45,9 +41,15 @@ class MyComponent extends Component {
         <div>Any amount of content between</div>
         <FilterResults
           items={items}
-          renderItem={this.renderItem}
-          fuseConfig={fuseConfig}
-        />
+          fuseConfig={fuseConfig}>
+          {filteredItems => {
+            return(
+              <div>
+                {filteredItems.forEach(item => <div>{item.name}</div>)}
+              </div>
+            )
+          }}
+        </FilterResults>
       </div>
     );
   }
@@ -93,10 +95,6 @@ Collection of fuzzy filtered items (filtered by the `InputFilter`'s value), each
 
 `fuseConfig` is an object that specifies configuration for [`fuse.js`](https://github.com/krisk/Fuse), the library that is doing the fuzzy searching. The only required key in this object is `keys`, which is an array that specifies the key(s), in the objects to use for comparison. Check out all of the configuration [options](https://github.com/krisk/Fuse#options).
 
-### renderItem
-
-`renderItem` is a required function that defines how each match is rendered. It receives the item and the index as arguments and should return a React element.
-
 ### items
 
 `items` is an array of the objects to be rendered. It defaults to an empty array.
@@ -104,22 +102,6 @@ Collection of fuzzy filtered items (filtered by the `InputFilter`'s value), each
 ### defaultAllItems
 
 `defaultAllItems` is a boolean that determines whether all items should be shown if the search value is empty. It defaults to true (meaning all items are shown by default).
-
-#### classPrefix
-
-`classPrefix` is a string that is used to prefix the class names in the component. It defaults to `react-fuzzy-filter`. (`react-fuzzy-filter__results-container`)
-
-### wrapper
-
-`wrapper` is an optional component that will wrap the results if defined. This will be used as the wrapper around the items INSTEAD of `react-fuzzy-filter__results-container`.
-
-### wrapperProps
-
-`wrapperProps` is an optional object containing additional props to be passed to the `wrapper`.
-
-### renderContainer
-
-`renderContainer` is an alternative to using `wrapper` and `wrapperProps`. It is a function that is used as the render function for `FilterResults`. It receives two arguments, an array of React elements (the items after they have already been transformed by `renderItem`, as well as an array of the raw items. It should return a React element.
 
 ### prefilters
 
