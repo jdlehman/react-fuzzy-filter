@@ -5,16 +5,11 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 
 export default {
   entry: 'src/index.js',
+  external: ['react'],
   plugins: [
-    nodeResolve({
-      skip: ['react']
-    }),
+    nodeResolve(),
     commonjs({
-      include: [
-        'node_modules/rxjs/**',
-        'node_modules/debounce/**',
-        'node_modules/fuse.js/**'
-      ]
+      include: ['node_modules/**']
     }),
     babel({
       babelrc: false,
