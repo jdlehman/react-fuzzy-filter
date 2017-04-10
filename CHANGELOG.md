@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.0 (2017-4-10)
+
+Changed:
+
+- Updated API to remove props and simplify usage. `FilterResults` now expects a function as a child, which receives the matching items as an argument. This provides more flexibility without needing to pass "configuration props".
+
+Removed:
+
+- Removed the following props in the API change: `classPrefix`, `wrapper`, `wrapperProps`, and `renderContainer`.
+
 ## 2.3.0 (2016-8-26)
 
 Added:
