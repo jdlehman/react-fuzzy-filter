@@ -2191,30 +2191,10 @@ function filterResultsFactory(store) {
         }
       }
     }, {
-      key: 'renderItems',
-      value: function renderItems(items) {
-        var _this3 = this;
-
-        return items.map(function (item, i) {
-          return _this3.props.renderItem(item, i);
-        });
-      }
-    }, {
       key: 'render',
       value: function render() {
-        var rawItems = this.filterItems();
-        var items = this.renderItems(rawItems);
-        if (typeof this.props.renderContainer === 'function') {
-          return this.props.renderContainer(items, rawItems);
-        }
-        if (this.props.wrapper) {
-          return React.createElement(this.props.wrapper, this.props.wrapperProps, items);
-        }
-        return React.createElement(
-          'span',
-          { className: this.props.classPrefix + '__results-container' },
-          items
-        );
+        var filteredItems = this.filterItems();
+        return this.props.children(filteredItems);
       }
     }]);
     return FilterResults;
@@ -2222,13 +2202,9 @@ function filterResultsFactory(store) {
 
   FilterResults.displayName = 'FilterResults';
   FilterResults.propTypes = {
-    renderItem: PropTypes.func.isRequired,
+    children: PropTypes.func.isRequired,
     items: PropTypes.array.isRequired,
     defaultAllItems: PropTypes.bool,
-    classPrefix: PropTypes.string,
-    wrapper: PropTypes.any,
-    wrapperProps: PropTypes.object,
-    renderContainer: PropTypes.func,
     fuseConfig: PropTypes.shape({
       keys: PropTypes.array.isRequired,
       id: PropTypes.string,
@@ -2252,8 +2228,6 @@ function filterResultsFactory(store) {
   };
   FilterResults.defaultProps = {
     defaultAllItems: true,
-    classPrefix: 'react-fuzzy-filter',
-    wrapperProps: {},
     prefilters: []
   };
 
