@@ -1,6 +1,6 @@
 import expect from 'expect';
 import {shallow} from 'enzyme';
-import React, { } from 'react';
+import React from 'react';
 import {Subject} from 'rxjs/Subject';
 import filterResultsFactory from '../src/FilterResults';
 
