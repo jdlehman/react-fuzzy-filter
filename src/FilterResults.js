@@ -74,9 +74,7 @@ export default function filterResultsFactory(store) {
 
     render() {
       const filteredItems = this.filterItems();
-      return(
-        this.props.children(filteredItems)
-      );
+      return this.props.children(filteredItems);
     }
   }
 
