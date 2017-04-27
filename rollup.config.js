@@ -17,7 +17,7 @@ export default {
     }),
     replace({
       'process.env.NODE_DEBUG': false,
-      'process.env.NODE_ENV': 'production'
+      'process.env.NODE_ENV': '"production"'
     })
   ],
   globals: {
