@@ -1,13 +1,14 @@
 module.exports = {
-  'extends': [
+  extends: [
     'panoply',
     'panoply/browser',
     'panoply/mocha',
     'panoply/react'
   ],
 
-  'globals': {
+  globals: {
     'global': true,
-    'process': true
+    'process': true,
+    'module': true
   }
 };
