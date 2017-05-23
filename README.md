@@ -70,7 +70,7 @@ An input field that controls the state used to render the items in `FilterResult
 
 ### initialSearch
 
-`initialSearch` is an optional string that can override the initial search state when the component is created.
+`initialSearch` is an optional string that can override the initial search state when the component is created. Updating this value will also update the input value, meaning it is possible to provide the `initialSearch` from a value that is either async or not known until moments after the first render.
 
 ### inputProps
 

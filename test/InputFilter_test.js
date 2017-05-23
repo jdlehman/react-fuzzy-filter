@@ -26,7 +26,7 @@ describe('InputFilter', () => {
     it('sets inputProps', () => {
       const inputProps = {placeholder: 'Search'};
       const component = shallow(<InputFilter inputProps={inputProps} />);
-      expect(component.find('.react-fuzzy-filter__input').html()).toEqual('<input class="react-fuzzy-filter__input" placeholder="Search"/>');
+      expect(component.find('.react-fuzzy-filter__input').html()).toEqual('<input class="react-fuzzy-filter__input" value="" placeholder="Search"/>');
     });
 
     it('sets initialSearch', () => {

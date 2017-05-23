@@ -1260,9 +1260,12 @@ function inputFilterFactory(store) {
         args[_key] = arguments[_key];
       }
 
-      return _ret = (_temp = (_this = possibleConstructorReturn(this, (_ref = InputFilter.__proto__ || Object.getPrototypeOf(InputFilter)).call.apply(_ref, [this].concat(args))), _this), _this.updateValue = index(updateValue, _this.props.debounceTime), _this.handleChange = function (_ref2) {
+      return _ret = (_temp = (_this = possibleConstructorReturn(this, (_ref = InputFilter.__proto__ || Object.getPrototypeOf(InputFilter)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+        value: _this.props.initialSearch || ''
+      }, _this.updateValue = index(updateValue, _this.props.debounceTime), _this.handleChange = function (_ref2) {
         var value = _ref2.target.value;
 
+        _this.setState({ value: value });
         if (_this.props.debounceTime > 0) {
           _this.updateValue(value, _this.props.onChange);
         } else {
@@ -1280,6 +1283,10 @@ function inputFilterFactory(store) {
       key: 'componentWillReceiveProps',
       value: function componentWillReceiveProps(nextProps) {
         this.updateValue = index(updateValue, nextProps.debounceTime);
+        if (nextProps.initialSearch !== this.props.initialSearch) {
+          updateValue(nextProps.initialSearch, this.props.onChange);
+          this.setState({ value: nextProps.initialSearch });
+        }
       }
     }, {
       key: 'render',
@@ -1287,7 +1294,7 @@ function inputFilterFactory(store) {
         return React__default.createElement('input', _extends({
           className: this.props.classPrefix + '__input',
           onChange: this.handleChange,
-          defaultValue: this.props.initialSearch
+          value: this.state.value
         }, this.props.inputProps));
       }
     }]);
