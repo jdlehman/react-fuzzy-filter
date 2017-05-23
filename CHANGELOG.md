@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0 (2017-5-23)
+
+Added:
+
+- Allow updating `initialSearch` prop. This provides an escape hook in situations where the `initialSearch` might not be known until right after the first render.
+
 ## 3.0.0 (2017-4-10)
 
 Changed:
