@@ -1,7 +1,7 @@
 import expect from 'expect';
-import {shallow} from 'enzyme';
+import { shallow } from 'enzyme';
 import React from 'react';
-import {Subject} from 'rxjs/Subject';
+import { Subject } from 'rxjs/Subject';
 import filterResultsFactory from '../src/FilterResults';
 
 const filteredResultsSpy = expect.createSpy().andReturn(<div />);
@@ -27,7 +27,11 @@ describe('FilterResults', () => {
 
   describe('#render', () => {
     it('passes filtered items to child function', () => {
-      shallow(<FilterResults items={items} fuseConfig={defaultFuseConfig}>{filteredResultsSpy}</FilterResults>);
+      shallow(
+        <FilterResults items={items} fuseConfig={defaultFuseConfig}>
+          {filteredResultsSpy}
+        </FilterResults>
+      );
       expect(filteredResultsSpy.calls.length).toEqual(1);
       expect(filteredResultsSpy.calls[0].arguments[0]).toEqual(items);
     });
@@ -37,7 +41,8 @@ describe('FilterResults', () => {
         <FilterResults
           items={items}
           fuseConfig={defaultFuseConfig}
-          defaultAllItems={false}>
+          defaultAllItems={false}
+        >
           {filteredResultsSpy}
         </FilterResults>
       );
@@ -48,14 +53,23 @@ describe('FilterResults', () => {
 
   describe('#renderItems', () => {
     it('fuzzy filters items by search state', () => {
-      const component = shallow(<FilterResults items={items} fuseConfig={defaultFuseConfig}>{filteredResultsSpy}</FilterResults>);
-      component.setState({search: 'hllo'});
+      const component = shallow(
+        <FilterResults items={items} fuseConfig={defaultFuseConfig}>
+          {filteredResultsSpy}
+        </FilterResults>
+      );
+      component.setState({ search: 'hllo' });
       expect(filteredResultsSpy.calls.length).toEqual(2);
-      expect(filteredResultsSpy.calls[1].arguments[0]).toEqual([{ name: 'one', searchData: 'hello', state: 'archived' }, { name: 'two', searchData: 'hello', state: '' }]);
+      expect(filteredResultsSpy.calls[1].arguments[0]).toEqual([
+        { name: 'one', searchData: 'hello', state: 'archived' },
+        { name: 'two', searchData: 'hello', state: '' }
+      ]);
 
-      component.setState({search: 'godby'});
+      component.setState({ search: 'godby' });
       expect(filteredResultsSpy.calls.length).toEqual(3);
-      expect(filteredResultsSpy.calls[2].arguments[0]).toEqual([{ name: 'three', searchData: 'goodbye', state: 'archived' }]);
+      expect(filteredResultsSpy.calls[2].arguments[0]).toEqual([
+        { name: 'three', searchData: 'goodbye', state: 'archived' }
+      ]);
     });
 
     it('accepts fuse config', () => {
@@ -64,17 +78,15 @@ describe('FilterResults', () => {
         id: 'name'
       };
       const component = shallow(
-        <FilterResults
-          fuseConfig={fuseConfig}
-          items={items}>
+        <FilterResults fuseConfig={fuseConfig} items={items}>
           {filteredResultsSpy}
         </FilterResults>
       );
-      component.setState({search: 'hllo'});
+      component.setState({ search: 'hllo' });
       expect(filteredResultsSpy.calls.length).toEqual(2);
       expect(filteredResultsSpy.calls[1].arguments[0]).toEqual([]);
 
-      component.setState({search: 'ree'});
+      component.setState({ search: 'ree' });
       expect(filteredResultsSpy.calls.length).toEqual(3);
       expect(filteredResultsSpy.calls[2].arguments[0]).toEqual(['three']);
     });
@@ -91,7 +103,7 @@ describe('FilterResults', () => {
           regex: /\S+:\S+/g,
           handler: function(match, items, Fuse) {
             const [key, value] = match.split(':');
-            const fuse = new Fuse(items, {keys: [key], threshold: 0.4});
+            const fuse = new Fuse(items, { keys: [key], threshold: 0.4 });
             return fuse.search(value);
           }
         }
@@ -100,21 +112,29 @@ describe('FilterResults', () => {
         <FilterResults
           fuseConfig={defaultFuseConfig}
           items={items}
-          prefilters={prefilters}>
+          prefilters={prefilters}
+        >
           {filteredResultsSpy}
         </FilterResults>
       );
-      component.setState({search: 'archived'});
+      component.setState({ search: 'archived' });
       expect(filteredResultsSpy.calls.length).toEqual(2);
-      expect(filteredResultsSpy.calls[1].arguments[0]).toEqual([{ name: 'one', searchData: 'hello', state: 'archived' }, { name: 'three', searchData: 'goodbye', state: 'archived' }]);
+      expect(filteredResultsSpy.calls[1].arguments[0]).toEqual([
+        { name: 'one', searchData: 'hello', state: 'archived' },
+        { name: 'three', searchData: 'goodbye', state: 'archived' }
+      ]);
 
-      component.setState({search: 'archived hello'});
+      component.setState({ search: 'archived hello' });
       expect(filteredResultsSpy.calls.length).toEqual(3);
-      expect(filteredResultsSpy.calls[2].arguments[0]).toEqual([{ name: 'one', searchData: 'hello', state: 'archived' }]);
+      expect(filteredResultsSpy.calls[2].arguments[0]).toEqual([
+        { name: 'one', searchData: 'hello', state: 'archived' }
+      ]);
 
-      component.setState({search: 'name:two'});
+      component.setState({ search: 'name:two' });
       expect(filteredResultsSpy.calls.length).toEqual(4);
-      expect(filteredResultsSpy.calls[3].arguments[0]).toEqual([{ name: 'two', searchData: 'hello', state: '' }]);
+      expect(filteredResultsSpy.calls[3].arguments[0]).toEqual([
+        { name: 'two', searchData: 'hello', state: '' }
+      ]);
     });
   });
 });

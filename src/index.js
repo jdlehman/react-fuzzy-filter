@@ -1,4 +1,4 @@
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import inputFilterFactory from './InputFilter';
 import filterResultsFactory from './FilterResults';
 

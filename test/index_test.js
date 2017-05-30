@@ -1,5 +1,5 @@
 import expect from 'expect';
-import {mount} from 'enzyme';
+import { mount } from 'enzyme';
 import React from 'react';
 import fuzzyFilterFactory from '../src';
 
@@ -15,7 +15,7 @@ const defaultFuseConfig = {
 };
 
 function componentFactory(inputFilterProps, filterResultsProps, resultsSpy) {
-  const {InputFilter, FilterResults} = fuzzyFilterFactory();
+  const { InputFilter, FilterResults } = fuzzyFilterFactory();
   function MyComponent() {
     return (
       <div>
@@ -39,7 +39,7 @@ describe('fuzzyFilterFactory', () => {
   });
 
   it('returns FilterResults and InputFilter components', () => {
-    const {InputFilter, FilterResults} = fuzzyFilterFactory();
+    const { InputFilter, FilterResults } = fuzzyFilterFactory();
     expect(typeof InputFilter).toEqual('function');
     expect(typeof FilterResults).toEqual('function');
     expect(FilterResults.displayName).toEqual('FilterResults');
@@ -48,8 +48,8 @@ describe('fuzzyFilterFactory', () => {
 
   it('input controls filter results', () => {
     const MyComponent = componentFactory(
-      {placeholder: 'Search'},
-      {items: items, fuseConfig: defaultFuseConfig},
+      { placeholder: 'Search' },
+      { items: items, fuseConfig: defaultFuseConfig },
       resultsSpy
     );
     const component = mount(<MyComponent />);
@@ -62,7 +62,7 @@ describe('fuzzyFilterFactory', () => {
     ]);
 
     component.find('input').simulate('change', {
-      target: {value: 'ello'}
+      target: { value: 'ello' }
     });
     expect(resultsSpy.calls.length).toEqual(3);
     expect(resultsSpy.calls[2].arguments[0]).toEqual([
@@ -71,7 +71,7 @@ describe('fuzzyFilterFactory', () => {
     ]);
 
     component.find('input').simulate('change', {
-      target: {value: 'gdbye'}
+      target: { value: 'gdbye' }
     });
     expect(resultsSpy.calls.length).toEqual(4);
     expect(resultsSpy.calls[3].arguments[0]).toEqual([
@@ -81,8 +81,8 @@ describe('fuzzyFilterFactory', () => {
 
   it('uses initialSearch', () => {
     const MyComponent = componentFactory(
-      {placeholder: 'Search', initialSearch: 'gdbye'},
-      {items: items, fuseConfig: defaultFuseConfig},
+      { placeholder: 'Search', initialSearch: 'gdbye' },
+      { items: items, fuseConfig: defaultFuseConfig },
       resultsSpy
     );
     mount(<MyComponent />);

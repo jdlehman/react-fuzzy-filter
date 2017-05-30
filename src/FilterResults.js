@@ -1,4 +1,4 @@
-import {Component} from 'react';
+import { Component } from 'react';
 import PropTypes from 'prop-types';
 import Fuse from 'fuse.js';
 
@@ -48,7 +48,7 @@ export default function filterResultsFactory(store) {
     };
 
     componentDidMount() {
-      this.subscription = store.subscribe(search => this.setState({search}));
+      this.subscription = store.subscribe(search => this.setState({ search }));
     }
 
     componentWillUnmount() {
@@ -57,18 +57,18 @@ export default function filterResultsFactory(store) {
 
     prefilterItems(search) {
       let items = this.props.items;
-      this.props.prefilters.forEach(({regex, handler}) => {
+      this.props.prefilters.forEach(({ regex, handler }) => {
         const matches = search.match(regex) || [];
         search = search.replace(regex, '').trim();
         matches.forEach(match => {
           items = handler(match, items, Fuse);
         });
       });
-      return {items, search};
+      return { items, search };
     }
 
     filterItems() {
-      const {items, search} = this.prefilterItems(this.state.search || '');
+      const { items, search } = this.prefilterItems(this.state.search || '');
       if (search.trim() === '') {
         return this.props.defaultAllItems ? items : [];
       } else {

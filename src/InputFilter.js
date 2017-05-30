@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import debounce from 'debounce';
 
@@ -41,14 +41,14 @@ export default function inputFilterFactory(store) {
       this.updateValue = debounce(updateValue, nextProps.debounceTime);
       if (nextProps.initialSearch !== this.props.initialSearch) {
         updateValue(nextProps.initialSearch, this.props.onChange);
-        this.setState({value: nextProps.initialSearch});
+        this.setState({ value: nextProps.initialSearch });
       }
     }
 
     updateValue = debounce(updateValue, this.props.debounceTime);
 
-    handleChange = ({target: {value}}) => {
-      this.setState({value});
+    handleChange = ({ target: { value } }) => {
+      this.setState({ value });
       if (this.props.debounceTime > 0) {
         this.updateValue(value, this.props.onChange);
       } else {
