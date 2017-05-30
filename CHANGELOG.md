@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.0 (2017-5-30)
+
+Added:
+
+- Added support for React ^15.5 by using `prop-types` package and prepares for deprecation of PropTypes from React.
+
 ## 3.1.0 (2017-5-23)
 
 Added:
