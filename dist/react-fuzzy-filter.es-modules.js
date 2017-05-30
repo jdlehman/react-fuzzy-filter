@@ -1,14 +1,57 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 
 
-
+function unwrapExports (x) {
+	return x && x.__esModule ? x['default'] : x;
+}
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
+
+// CommonJS / Node have global context exposed as "global" variable.
+// We don't want to include the whole node.d.ts this this compilation unit so we'll just fake
+// the global "global" var for now.
+var __window = typeof window !== 'undefined' && window;
+var __self = typeof self !== 'undefined' && typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope && self;
+var __global = typeof commonjsGlobal !== 'undefined' && commonjsGlobal;
+var _root = __window || __global || __self;
+var root_1 = _root;
+// Workaround Closure Compiler restriction: The body of a goog.module cannot use throw.
+// This is needed when used with angular/tsickle which inserts a goog.module statement.
+// Wrap in IIFE
+(function () {
+    if (!_root) {
+        throw new Error('RxJS could not find any global context (window, self, global)');
+    }
+})();
+
+
+var root = {
+    root: root_1
+};
+
+function isFunction(x) {
+  return typeof x === 'function';
+}
+var isFunction_2 = isFunction;
+
+
+var isFunction_1 = {
+  isFunction: isFunction_2
+};
+
+var isArray_1 = Array.isArray || function (x) {
+	return x && typeof x.length === 'number';
+};
+
+
+var isArray = {
+	isArray: isArray_1
+};
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
@@ -104,40 +147,6 @@ var possibleConstructorReturn = function (self, call) {
   }
 
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
-};
-
-var root = createCommonjsModule(function (module, exports) {
-    "use strict";
-    /**
-     * window: browser in DOM main thread
-     * self: browser in WebWorker
-     * global: Node.js/other
-     */
-
-    exports.root = (typeof window === 'undefined' ? 'undefined' : _typeof(window)) == 'object' && window.window === window && window || (typeof self === 'undefined' ? 'undefined' : _typeof(self)) == 'object' && self.self === self && self || _typeof(commonjsGlobal) == 'object' && commonjsGlobal.global === commonjsGlobal && commonjsGlobal;
-    if (!exports.root) {
-        throw new Error('RxJS could not find any global context (window, self, global)');
-    }
-    
-});
-
-function isFunction(x) {
-  return typeof x === 'function';
-}
-var isFunction_2 = isFunction;
-
-
-var isFunction_1 = {
-  isFunction: isFunction_2
-};
-
-var isArray_1 = Array.isArray || function (x) {
-	return x && typeof x.length === 'number';
-};
-
-
-var isArray = {
-	isArray: isArray_1
 };
 
 function isObject(x) {
@@ -645,14 +654,18 @@ var SafeSubscriber = function (_super) {
         }
     };
     SafeSubscriber.prototype.complete = function () {
+        var _this = this;
         if (!this.isStopped) {
             var _parentSubscriber = this._parentSubscriber;
             if (this._complete) {
+                var wrappedComplete = function wrappedComplete() {
+                    return _this._complete.call(_this._context);
+                };
                 if (!_parentSubscriber.syncErrorThrowable) {
-                    this.__tryOrUnsub(this._complete);
+                    this.__tryOrUnsub(wrappedComplete);
                     this.unsubscribe();
                 } else {
-                    this.__tryOrSetError(_parentSubscriber, this._complete);
+                    this.__tryOrSetError(_parentSubscriber, wrappedComplete);
                     this.unsubscribe();
                 }
             } else {
@@ -1174,21 +1187,165 @@ var BehaviorSubject = function (_super) {
 }(Subject_1.Subject);
 var BehaviorSubject_2 = BehaviorSubject;
 
-var index$1 = Date.now || now;
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * 
+ */
 
-function now() {
-    return new Date().getTime();
+function makeEmptyFunction(arg) {
+  return function () {
+    return arg;
+  };
 }
 
 /**
- * Module dependencies.
+ * This function accepts and discards inputs; it has no side effects. This is
+ * primarily useful idiomatically for overridable function endpoints which
+ * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
  */
+var emptyFunction = function emptyFunction() {};
+
+emptyFunction.thatReturns = makeEmptyFunction;
+emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
+emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
+emptyFunction.thatReturnsNull = makeEmptyFunction(null);
+emptyFunction.thatReturnsThis = function () {
+  return this;
+};
+emptyFunction.thatReturnsArgument = function (arg) {
+  return arg;
+};
+
+var emptyFunction_1 = emptyFunction;
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
+
+var validateFormat = function validateFormat(format) {};
+
+function invariant(condition, format, a, b, c, d, e, f) {
+  validateFormat(format);
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
+      error.name = 'Invariant Violation';
+    }
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
+}
+
+var invariant_1 = invariant;
+
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+
+var ReactPropTypesSecret_1 = ReactPropTypesSecret;
+
+var factoryWithThrowingShims = function factoryWithThrowingShims() {
+  function shim(props, propName, componentName, location, propFullName, secret) {
+    if (secret === ReactPropTypesSecret_1) {
+      // It is still safe when called from React.
+      return;
+    }
+    invariant_1(false, 'Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use PropTypes.checkPropTypes() to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
+  }
+  shim.isRequired = shim;
+  function getShim() {
+    return shim;
+  }
+  // Important!
+  // Keep this list in sync with production version in `./factoryWithTypeCheckers.js`.
+  var ReactPropTypes = {
+    array: shim,
+    bool: shim,
+    func: shim,
+    number: shim,
+    object: shim,
+    string: shim,
+    symbol: shim,
+
+    any: shim,
+    arrayOf: getShim,
+    element: shim,
+    instanceOf: getShim,
+    node: shim,
+    objectOf: getShim,
+    oneOf: getShim,
+    oneOfType: getShim,
+    shape: getShim
+  };
+
+  ReactPropTypes.checkPropTypes = emptyFunction_1;
+  ReactPropTypes.PropTypes = ReactPropTypes;
+
+  return ReactPropTypes;
+};
+
+var index = createCommonjsModule(function (module) {
+  /**
+   * Copyright 2013-present, Facebook, Inc.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   */
+
+  {
+    // By explicitly using `prop-types` you are opting into new production behavior.
+    // http://fb.me/prop-types-in-prod
+    module.exports = factoryWithThrowingShims();
+  }
+});
 
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
  * be triggered. The function will be called after it stops being called for
  * N milliseconds. If `immediate` is passed, trigger the function on the
- * leading edge, instead of the trailing.
+ * leading edge, instead of the trailing. The function also has a property 'clear' 
+ * that is a function which will clear the timer to prevent previously scheduled executions. 
  *
  * @source underscore.js
  * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
@@ -1198,28 +1355,28 @@ function now() {
  * @api public
  */
 
-var index = function debounce(func, wait, immediate) {
+var index$1 = function debounce(func, wait, immediate) {
   var timeout, args, context, timestamp, result;
   if (null == wait) wait = 100;
 
   function later() {
-    var last = index$1() - timestamp;
+    var last = Date.now() - timestamp;
 
-    if (last < wait && last > 0) {
+    if (last < wait && last >= 0) {
       timeout = setTimeout(later, wait - last);
     } else {
       timeout = null;
       if (!immediate) {
         result = func.apply(context, args);
-        if (!timeout) context = args = null;
+        context = args = null;
       }
     }
   }
 
-  return function debounced() {
+  var debounced = function debounced() {
     context = this;
     args = arguments;
-    timestamp = index$1();
+    timestamp = Date.now();
     var callNow = immediate && !timeout;
     if (!timeout) timeout = setTimeout(later, wait);
     if (callNow) {
@@ -1229,6 +1386,15 @@ var index = function debounce(func, wait, immediate) {
 
     return result;
   };
+
+  debounced.clear = function () {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+  };
+
+  return debounced;
 };
 
 function inputFilterFactory(store) {
@@ -1256,7 +1422,7 @@ function inputFilterFactory(store) {
 
       return _ret = (_temp = (_this = possibleConstructorReturn(this, (_ref = InputFilter.__proto__ || Object.getPrototypeOf(InputFilter)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
         value: _this.props.initialSearch || ''
-      }, _this.updateValue = index(updateValue, _this.props.debounceTime), _this.handleChange = function (_ref2) {
+      }, _this.updateValue = index$1(updateValue, _this.props.debounceTime), _this.handleChange = function (_ref2) {
         var value = _ref2.target.value;
 
         _this.setState({ value: value });
@@ -1276,7 +1442,7 @@ function inputFilterFactory(store) {
     }, {
       key: 'componentWillReceiveProps',
       value: function componentWillReceiveProps(nextProps) {
-        this.updateValue = index(updateValue, nextProps.debounceTime);
+        this.updateValue = index$1(updateValue, nextProps.debounceTime);
         if (nextProps.initialSearch !== this.props.initialSearch) {
           updateValue(nextProps.initialSearch, this.props.onChange);
           this.setState({ value: nextProps.initialSearch });
@@ -1297,11 +1463,11 @@ function inputFilterFactory(store) {
 
   InputFilter.displayName = 'InputFilter';
   InputFilter.propTypes = {
-    classPrefix: PropTypes.string.isRequired,
-    initialSearch: PropTypes.string,
-    inputProps: PropTypes.object,
-    onChange: PropTypes.func,
-    debounceTime: PropTypes.number
+    classPrefix: index.string.isRequired,
+    initialSearch: index.string,
+    inputProps: index.object,
+    onChange: index.func,
+    debounceTime: index.number
   };
   InputFilter.defaultProps = {
     classPrefix: 'react-fuzzy-filter',
@@ -1315,823 +1481,1019 @@ function inputFilterFactory(store) {
 }
 
 var fuse = createCommonjsModule(function (module, exports) {
-  /**
-   * @license
-   * Fuse - Lightweight fuzzy-search
-   *
-   * Copyright (c) 2012-2016 Kirollos Risk <kirollos@gmail.com>.
+  /*!
+   * Fuse.js v3.0.4 - Lightweight fuzzy-search (http://fusejs.io)
+   * 
+   * Copyright (c) 2012-2017 Kirollos Risk (http://kiro.me)
    * All Rights Reserved. Apache Software License 2.0
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License")
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
+   * 
    * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
    */
-  (function (global) {
-    'use strict';
+  (function webpackUniversalModuleDefinition(root, factory) {
+    module.exports = factory();
+  })(commonjsGlobal, function () {
+    return (/******/function (modules) {
+        // webpackBootstrap
+        /******/ // The module cache
+        /******/var installedModules = {};
+        /******/
+        /******/ // The require function
+        /******/function __webpack_require__(moduleId) {
+          /******/
+          /******/ // Check if module is in cache
+          /******/if (installedModules[moduleId]) {
+            /******/return installedModules[moduleId].exports;
+            /******/
+          }
+          /******/ // Create a new module (and put it into the cache)
+          /******/var module = installedModules[moduleId] = {
+            /******/i: moduleId,
+            /******/l: false,
+            /******/exports: {}
+            /******/ };
+          /******/
+          /******/ // Execute the module function
+          /******/modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+          /******/
+          /******/ // Flag the module as loaded
+          /******/module.l = true;
+          /******/
+          /******/ // Return the exports of the module
+          /******/return module.exports;
+          /******/
+        }
+        /******/
+        /******/
+        /******/ // expose the modules object (__webpack_modules__)
+        /******/__webpack_require__.m = modules;
+        /******/
+        /******/ // expose the module cache
+        /******/__webpack_require__.c = installedModules;
+        /******/
+        /******/ // identity function for calling harmony imports with the correct context
+        /******/__webpack_require__.i = function (value) {
+          return value;
+        };
+        /******/
+        /******/ // define getter function for harmony exports
+        /******/__webpack_require__.d = function (exports, name, getter) {
+          /******/if (!__webpack_require__.o(exports, name)) {
+            /******/Object.defineProperty(exports, name, {
+              /******/configurable: false,
+              /******/enumerable: true,
+              /******/get: getter
+              /******/ });
+            /******/
+          }
+          /******/
+        };
+        /******/
+        /******/ // getDefaultExport function for compatibility with non-harmony modules
+        /******/__webpack_require__.n = function (module) {
+          /******/var getter = module && module.__esModule ?
+          /******/function getDefault() {
+            return module['default'];
+          } :
+          /******/function getModuleExports() {
+            return module;
+          };
+          /******/__webpack_require__.d(getter, 'a', getter);
+          /******/return getter;
+          /******/
+        };
+        /******/
+        /******/ // Object.prototype.hasOwnProperty.call
+        /******/__webpack_require__.o = function (object, property) {
+          return Object.prototype.hasOwnProperty.call(object, property);
+        };
+        /******/
+        /******/ // __webpack_public_path__
+        /******/__webpack_require__.p = "";
+        /******/
+        /******/ // Load entry module and return exports
+        /******/return __webpack_require__(__webpack_require__.s = 8);
+        /******/
+      }(
+      /************************************************************************/
+      /******/[
+      /* 0 */
+      /***/function (module, exports, __webpack_require__) {
 
-    /** @type {function(...*)} */
+        "use strict";
 
-    function log() {
-      console.log.apply(console, arguments);
-    }
+        module.exports = function (obj) {
+          return Object.prototype.toString.call(obj) === '[object Array]';
+        };
 
-    var defaultOptions = {
-      // The name of the identifier property. If specified, the returned result will be a list
-      // of the items' dentifiers, otherwise it will be a list of the items.
-      id: null,
-
-      // Indicates whether comparisons should be case sensitive.
-
-      caseSensitive: false,
-
-      // An array of values that should be included from the searcher's output. When this array
-      // contains elements, each result in the list will be of the form `{ item: ..., include1: ..., include2: ... }`.
-      // Values you can include are `score`, `matchedLocations`
-      include: [],
-
-      // Whether to sort the result list, by score
-      shouldSort: true,
-
-      // The search function to use
-      // Note that the default search function ([[Function]]) must conform to the following API:
-      //
-      //  @param pattern The pattern string to search
-      //  @param options The search option
-      //  [[Function]].constructor = function(pattern, options)
-      //
-      //  @param text: the string to search in for the pattern
-      //  @return Object in the form of:
-      //    - isMatch: boolean
-      //    - score: Int
-      //  [[Function]].prototype.search = function(text)
-      searchFn: BitapSearcher,
-
-      // Default sort function
-      sortFn: function sortFn(a, b) {
-        return a.score - b.score;
+        /***/
       },
+      /* 1 */
+      /***/function (module, exports, __webpack_require__) {
 
-      // The get function to use when fetching an object's properties.
-      // The default will search nested paths *ie foo.bar.baz*
-      getFn: deepValue,
+        "use strict";
 
-      // List of properties that will be searched. This also supports nested properties.
-      keys: [],
-
-      // Will print to the console. Useful for debugging.
-      verbose: false,
-
-      // When true, the search algorithm will search individual words **and** the full string,
-      // computing the final score as a function of both. Note that when `tokenize` is `true`,
-      // the `threshold`, `distance`, and `location` are inconsequential for individual tokens.
-      tokenize: false,
-
-      // When true, the result set will only include records that match all tokens. Will only work
-      // if `tokenize` is also true.
-      matchAllTokens: false,
-
-      // Regex used to separate words when searching. Only applicable when `tokenize` is `true`.
-      tokenSeparator: / +/g,
-
-      // Minimum number of characters that must be matched before a result is considered a match
-      minMatchCharLength: 1,
-
-      // When true, the algorithm continues searching to the end of the input even if a perfect
-      // match is found before the end of the same input.
-      findAllMatches: false
-    };
-
-    /**
-     * @constructor
-     * @param {!Array} list
-     * @param {!Object<string, *>} options
-     */
-    function Fuse(list, options) {
-      var key;
-
-      this.list = list;
-      this.options = options = options || {};
-
-      for (key in defaultOptions) {
-        if (!defaultOptions.hasOwnProperty(key)) {
-          continue;
-        }
-        // Add boolean type options
-        if (typeof defaultOptions[key] === 'boolean') {
-          this.options[key] = key in options ? options[key] : defaultOptions[key];
-          // Add all other options
-        } else {
-          this.options[key] = options[key] || defaultOptions[key];
-        }
-      }
-    }
-
-    Fuse.VERSION = '2.6.2';
-
-    /**
-     * Sets a new list for Fuse to match against.
-     * @param {!Array} list
-     * @return {!Array} The newly set list
-     * @public
-     */
-    Fuse.prototype.set = function (list) {
-      this.list = list;
-      return list;
-    };
-
-    Fuse.prototype.search = function (pattern) {
-      if (this.options.verbose) log('\nSearch term:', pattern, '\n');
-
-      this.pattern = pattern;
-      this.results = [];
-      this.resultMap = {};
-      this._keyMap = null;
-
-      this._prepareSearchers();
-      this._startSearch();
-      this._computeScore();
-      this._sort();
-
-      var output = this._format();
-      return output;
-    };
-
-    Fuse.prototype._prepareSearchers = function () {
-      var options = this.options;
-      var pattern = this.pattern;
-      var searchFn = options.searchFn;
-      var tokens = pattern.split(options.tokenSeparator);
-      var i = 0;
-      var len = tokens.length;
-
-      if (this.options.tokenize) {
-        this.tokenSearchers = [];
-        for (; i < len; i++) {
-          this.tokenSearchers.push(new searchFn(tokens[i], options));
-        }
-      }
-      this.fullSeacher = new searchFn(pattern, options);
-    };
-
-    Fuse.prototype._startSearch = function () {
-      var options = this.options;
-      var getFn = options.getFn;
-      var list = this.list;
-      var listLen = list.length;
-      var keys = this.options.keys;
-      var keysLen = keys.length;
-      var key;
-      var weight;
-      var item = null;
-      var i;
-      var j;
-
-      // Check the first item in the list, if it's a string, then we assume
-      // that every item in the list is also a string, and thus it's a flattened array.
-      if (typeof list[0] === 'string') {
-        // Iterate over every item
-        for (i = 0; i < listLen; i++) {
-          this._analyze('', list[i], i, i);
-        }
-      } else {
-        this._keyMap = {};
-        // Otherwise, the first item is an Object (hopefully), and thus the searching
-        // is done on the values of the keys of each item.
-        // Iterate over every item
-        for (i = 0; i < listLen; i++) {
-          item = list[i];
-          // Iterate over every key
-          for (j = 0; j < keysLen; j++) {
-            key = keys[j];
-            if (typeof key !== 'string') {
-              weight = 1 - key.weight || 1;
-              this._keyMap[key.name] = {
-                weight: weight
-              };
-              if (key.weight <= 0 || key.weight > 1) {
-                throw new Error('Key weight has to be > 0 and <= 1');
-              }
-              key = key.name;
-            } else {
-              this._keyMap[key] = {
-                weight: 1
-              };
+        var _createClass = function () {
+          function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+              var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
             }
-            this._analyze(key, getFn(item, key, []), item, i);
+          }return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+          };
+        }();
+
+        function _classCallCheck(instance, Constructor) {
+          if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
           }
         }
-      }
-    };
 
-    Fuse.prototype._analyze = function (key, text, entity, index) {
-      var options = this.options;
-      var words;
-      var scores;
-      var exists = false;
-      var existingResult;
-      var averageScore;
-      var finalScore;
-      var scoresLen;
-      var mainSearchResult;
-      var tokenSearcher;
-      var termScores;
-      var word;
-      var tokenSearchResult;
-      var hasMatchInText;
-      var checkTextMatches;
-      var i;
-      var j;
+        var bitapRegexSearch = __webpack_require__(5);
+        var bitapSearch = __webpack_require__(7);
+        var patternAlphabet = __webpack_require__(4);
 
-      // Check if the text can be searched
-      if (text === undefined || text === null) {
-        return;
-      }
+        var Bitap = function () {
+          function Bitap(pattern, _ref) {
+            var _ref$location = _ref.location,
+                location = _ref$location === undefined ? 0 : _ref$location,
+                _ref$distance = _ref.distance,
+                distance = _ref$distance === undefined ? 100 : _ref$distance,
+                _ref$threshold = _ref.threshold,
+                threshold = _ref$threshold === undefined ? 0.6 : _ref$threshold,
+                _ref$maxPatternLength = _ref.maxPatternLength,
+                maxPatternLength = _ref$maxPatternLength === undefined ? 32 : _ref$maxPatternLength,
+                _ref$isCaseSensitive = _ref.isCaseSensitive,
+                isCaseSensitive = _ref$isCaseSensitive === undefined ? false : _ref$isCaseSensitive,
+                _ref$tokenSeparator = _ref.tokenSeparator,
+                tokenSeparator = _ref$tokenSeparator === undefined ? / +/g : _ref$tokenSeparator,
+                _ref$findAllMatches = _ref.findAllMatches,
+                findAllMatches = _ref$findAllMatches === undefined ? false : _ref$findAllMatches,
+                _ref$minMatchCharLeng = _ref.minMatchCharLength,
+                minMatchCharLength = _ref$minMatchCharLeng === undefined ? 1 : _ref$minMatchCharLeng;
 
-      scores = [];
+            _classCallCheck(this, Bitap);
 
-      var numTextMatches = 0;
-
-      if (typeof text === 'string') {
-        words = text.split(options.tokenSeparator);
-
-        if (options.verbose) log('---------\nKey:', key);
-
-        if (this.options.tokenize) {
-          for (i = 0; i < this.tokenSearchers.length; i++) {
-            tokenSearcher = this.tokenSearchers[i];
-
-            if (options.verbose) log('Pattern:', tokenSearcher.pattern);
-
-            termScores = [];
-            hasMatchInText = false;
-
-            for (j = 0; j < words.length; j++) {
-              word = words[j];
-              tokenSearchResult = tokenSearcher.search(word);
-              var obj = {};
-              if (tokenSearchResult.isMatch) {
-                obj[word] = tokenSearchResult.score;
-                exists = true;
-                hasMatchInText = true;
-                scores.push(tokenSearchResult.score);
-              } else {
-                obj[word] = 1;
-                if (!this.options.matchAllTokens) {
-                  scores.push(1);
-                }
-              }
-              termScores.push(obj);
-            }
-
-            if (hasMatchInText) {
-              numTextMatches++;
-            }
-
-            if (options.verbose) log('Token scores:', termScores);
-          }
-
-          averageScore = scores[0];
-          scoresLen = scores.length;
-          for (i = 1; i < scoresLen; i++) {
-            averageScore += scores[i];
-          }
-          averageScore = averageScore / scoresLen;
-
-          if (options.verbose) log('Token score average:', averageScore);
-        }
-
-        mainSearchResult = this.fullSeacher.search(text);
-        if (options.verbose) log('Full text score:', mainSearchResult.score);
-
-        finalScore = mainSearchResult.score;
-        if (averageScore !== undefined) {
-          finalScore = (finalScore + averageScore) / 2;
-        }
-
-        if (options.verbose) log('Score average:', finalScore);
-
-        checkTextMatches = this.options.tokenize && this.options.matchAllTokens ? numTextMatches >= this.tokenSearchers.length : true;
-
-        if (options.verbose) log('Check Matches', checkTextMatches);
-
-        // If a match is found, add the item to <rawResults>, including its score
-        if ((exists || mainSearchResult.isMatch) && checkTextMatches) {
-          // Check if the item already exists in our results
-          existingResult = this.resultMap[index];
-
-          if (existingResult) {
-            // Use the lowest score
-            // existingResult.score, bitapResult.score
-            existingResult.output.push({
-              key: key,
-              score: finalScore,
-              matchedIndices: mainSearchResult.matchedIndices
-            });
-          } else {
-            // Add it to the raw result list
-            this.resultMap[index] = {
-              item: entity,
-              output: [{
-                key: key,
-                score: finalScore,
-                matchedIndices: mainSearchResult.matchedIndices
-              }]
+            this.options = {
+              location: location,
+              distance: distance,
+              threshold: threshold,
+              maxPatternLength: maxPatternLength,
+              isCaseSensitive: isCaseSensitive,
+              tokenSeparator: tokenSeparator,
+              findAllMatches: findAllMatches,
+              minMatchCharLength: minMatchCharLength
             };
 
-            this.results.push(this.resultMap[index]);
+            this.pattern = this.options.isCaseSensitive ? pattern : pattern.toLowerCase();
+
+            if (this.pattern.length <= maxPatternLength) {
+              this.patternAlphabet = patternAlphabet(this.pattern);
+            }
           }
-        }
-      } else if (isArray(text)) {
-        for (i = 0; i < text.length; i++) {
-          this._analyze(key, text[i], entity, index);
-        }
-      }
-    };
 
-    Fuse.prototype._computeScore = function () {
-      var i;
-      var j;
-      var keyMap = this._keyMap;
-      var totalScore;
-      var output;
-      var scoreLen;
-      var score;
-      var weight;
-      var results = this.results;
-      var bestScore;
-      var nScore;
+          _createClass(Bitap, [{
+            key: 'search',
+            value: function search(text) {
+              if (!this.options.isCaseSensitive) {
+                text = text.toLowerCase();
+              }
 
-      if (this.options.verbose) log('\n\nComputing score:\n');
+              // Exact match
+              if (this.pattern === text) {
+                return {
+                  isMatch: true,
+                  score: 0,
+                  matchedIndices: [[0, text.length - 1]]
+                };
+              }
 
-      for (i = 0; i < results.length; i++) {
-        totalScore = 0;
-        output = results[i].output;
-        scoreLen = output.length;
+              // When pattern length is greater than the machine word length, just do a a regex comparison
+              var _options = this.options,
+                  maxPatternLength = _options.maxPatternLength,
+                  tokenSeparator = _options.tokenSeparator;
 
-        bestScore = 1;
+              if (this.pattern.length > maxPatternLength) {
+                return bitapRegexSearch(text, this.pattern, tokenSeparator);
+              }
 
-        for (j = 0; j < scoreLen; j++) {
-          score = output[j].score;
-          weight = keyMap ? keyMap[output[j].key].weight : 1;
+              // Otherwise, use Bitap algorithm
+              var _options2 = this.options,
+                  location = _options2.location,
+                  distance = _options2.distance,
+                  threshold = _options2.threshold,
+                  findAllMatches = _options2.findAllMatches,
+                  minMatchCharLength = _options2.minMatchCharLength;
 
-          nScore = score * weight;
+              return bitapSearch(text, this.pattern, this.patternAlphabet, {
+                location: location,
+                distance: distance,
+                threshold: threshold,
+                findAllMatches: findAllMatches,
+                minMatchCharLength: minMatchCharLength
+              });
+            }
+          }]);
 
-          if (weight !== 1) {
-            bestScore = Math.min(bestScore, nScore);
+          return Bitap;
+        }();
+
+        // let x = new Bitap("od mn war", {})
+        // let result = x.search("Old Man's War")
+        // console.log(result)
+
+        module.exports = Bitap;
+
+        /***/
+      },
+      /* 2 */
+      /***/function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+        var isArray = __webpack_require__(0);
+
+        var deepValue = function deepValue(obj, path, list) {
+          if (!path) {
+            // If there's no path left, we've gotten to the object we care about.
+            list.push(obj);
           } else {
-            totalScore += nScore;
-            output[j].nScore = nScore;
+            var dotIndex = path.indexOf('.');
+            var firstSegment = path;
+            var remaining = null;
+
+            if (dotIndex !== -1) {
+              firstSegment = path.slice(0, dotIndex);
+              remaining = path.slice(dotIndex + 1);
+            }
+
+            var value = obj[firstSegment];
+
+            if (value !== null && value !== undefined) {
+              if (!remaining && (typeof value === 'string' || typeof value === 'number')) {
+                list.push(value);
+              } else if (isArray(value)) {
+                // Search each item in the array.
+                for (var i = 0, len = value.length; i < len; i += 1) {
+                  deepValue(value[i], remaining, list);
+                }
+              } else if (remaining) {
+                // An object. Recurse further.
+                deepValue(value, remaining, list);
+              }
+            }
           }
-        }
 
-        if (bestScore === 1) {
-          results[i].score = totalScore / scoreLen;
-        } else {
-          results[i].score = bestScore;
-        }
+          return list;
+        };
 
-        if (this.options.verbose) log(results[i]);
-      }
-    };
+        module.exports = function (obj, path) {
+          return deepValue(obj, path, []);
+        };
 
-    Fuse.prototype._sort = function () {
-      var options = this.options;
-      if (options.shouldSort) {
-        if (options.verbose) log('\n\nSorting....');
-        this.results.sort(options.sortFn);
-      }
-    };
+        /***/
+      },
+      /* 3 */
+      /***/function (module, exports, __webpack_require__) {
 
-    Fuse.prototype._format = function () {
-      var options = this.options;
-      var getFn = options.getFn;
-      var finalOutput = [];
-      var item;
-      var i;
-      var len;
-      var results = this.results;
-      var replaceValue;
-      var getItemAtIndex;
-      var include = options.include;
+        "use strict";
 
-      if (options.verbose) log('\n\nOutput:\n\n', results);
+        module.exports = function () {
+          var matchmask = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+          var minMatchCharLength = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
-      // Helper function, here for speed-up, which replaces the item with its value,
-      // if the options specifies it,
-      replaceValue = options.id ? function (index) {
-        results[index].item = getFn(results[index].item, options.id, [])[0];
-      } : function () {};
+          var matchedIndices = [];
+          var start = -1;
+          var end = -1;
+          var i = 0;
 
-      getItemAtIndex = function getItemAtIndex(index) {
-        var record = results[index];
-        var data;
-        var j;
-        var output;
-        var _item;
-        var _result;
+          for (var len = matchmask.length; i < len; i += 1) {
+            var match = matchmask[i];
+            if (match && start === -1) {
+              start = i;
+            } else if (!match && start !== -1) {
+              end = i - 1;
+              if (end - start + 1 >= minMatchCharLength) {
+                matchedIndices.push([start, end]);
+              }
+              start = -1;
+            }
+          }
 
-        // If `include` has values, put the item in the result
-        if (include.length > 0) {
-          data = {
-            item: record.item
+          // (i-1 - start) + 1 => i - start
+          if (matchmask[i - 1] && i - start >= minMatchCharLength) {
+            matchedIndices.push([start, i - 1]);
+          }
+
+          return matchedIndices;
+        };
+
+        /***/
+      },
+      /* 4 */
+      /***/function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+        module.exports = function (pattern) {
+          var mask = {};
+          var len = pattern.length;
+
+          for (var i = 0; i < len; i += 1) {
+            mask[pattern.charAt(i)] = 0;
+          }
+
+          for (var _i = 0; _i < len; _i += 1) {
+            mask[pattern.charAt(_i)] |= 1 << len - _i - 1;
+          }
+
+          return mask;
+        };
+
+        /***/
+      },
+      /* 5 */
+      /***/function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+        module.exports = function (text, pattern) {
+          var tokenSeparator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : / +/g;
+
+          var matches = text.match(new RegExp(pattern.replace(tokenSeparator, '|')));
+          var isMatch = !!matches;
+          var matchedIndices = [];
+
+          if (isMatch) {
+            for (var i = 0, matchesLen = matches.length; i < matchesLen; i += 1) {
+              var match = matches[i];
+              matchedIndices.push([text.indexOf(match), match.length - 1]);
+            }
+          }
+
+          return {
+            // TODO: revisit this score
+            score: isMatch ? 0.5 : 1,
+            isMatch: isMatch,
+            matchedIndices: matchedIndices
           };
-          if (include.indexOf('matches') !== -1) {
-            output = record.output;
-            data.matches = [];
-            for (j = 0; j < output.length; j++) {
-              _item = output[j];
-              _result = {
-                indices: _item.matchedIndices
-              };
-              if (_item.key) {
-                _result.key = _item.key;
-              }
-              data.matches.push(_result);
+        };
+
+        /***/
+      },
+      /* 6 */
+      /***/function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+        module.exports = function (pattern, _ref) {
+          var _ref$errors = _ref.errors,
+              errors = _ref$errors === undefined ? 0 : _ref$errors,
+              _ref$currentLocation = _ref.currentLocation,
+              currentLocation = _ref$currentLocation === undefined ? 0 : _ref$currentLocation,
+              _ref$expectedLocation = _ref.expectedLocation,
+              expectedLocation = _ref$expectedLocation === undefined ? 0 : _ref$expectedLocation,
+              _ref$distance = _ref.distance,
+              distance = _ref$distance === undefined ? 100 : _ref$distance;
+
+          var accuracy = errors / pattern.length;
+          var proximity = Math.abs(expectedLocation - currentLocation);
+
+          if (!distance) {
+            // Dodge divide by zero error.
+            return proximity ? 1.0 : accuracy;
+          }
+
+          return accuracy + proximity / distance;
+        };
+
+        /***/
+      },
+      /* 7 */
+      /***/function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+        var bitapScore = __webpack_require__(6);
+        var matchedIndices = __webpack_require__(3);
+
+        module.exports = function (text, pattern, patternAlphabet, _ref) {
+          var _ref$location = _ref.location,
+              location = _ref$location === undefined ? 0 : _ref$location,
+              _ref$distance = _ref.distance,
+              distance = _ref$distance === undefined ? 100 : _ref$distance,
+              _ref$threshold = _ref.threshold,
+              threshold = _ref$threshold === undefined ? 0.6 : _ref$threshold,
+              _ref$findAllMatches = _ref.findAllMatches,
+              findAllMatches = _ref$findAllMatches === undefined ? false : _ref$findAllMatches,
+              _ref$minMatchCharLeng = _ref.minMatchCharLength,
+              minMatchCharLength = _ref$minMatchCharLeng === undefined ? 1 : _ref$minMatchCharLeng;
+
+          var expectedLocation = location;
+          // Set starting location at beginning text and initialize the alphabet.
+          var textLen = text.length;
+          // Highest score beyond which we give up.
+          var currentThreshold = threshold;
+          // Is there a nearby exact match? (speedup)
+          var bestLocation = text.indexOf(pattern, expectedLocation);
+
+          var patternLen = pattern.length;
+
+          // a mask of the matches
+          var matchMask = [];
+          for (var i = 0; i < textLen; i += 1) {
+            matchMask[i] = 0;
+          }
+
+          if (bestLocation != -1) {
+            var score = bitapScore(pattern, {
+              errors: 0,
+              currentLocation: bestLocation,
+              expectedLocation: expectedLocation,
+              distance: distance
+            });
+            currentThreshold = Math.min(score, currentThreshold);
+
+            // What about in the other direction? (speed up)
+            bestLocation = text.lastIndexOf(pattern, expectedLocation + patternLen);
+
+            if (bestLocation != -1) {
+              var _score = bitapScore(pattern, {
+                errors: 0,
+                currentLocation: bestLocation,
+                expectedLocation: expectedLocation,
+                distance: distance
+              });
+              currentThreshold = Math.min(_score, currentThreshold);
             }
           }
 
-          if (include.indexOf('score') !== -1) {
-            data.score = results[index].score;
-          }
-        } else {
-          data = record.item;
-        }
+          // Reset the best location
+          bestLocation = -1;
 
-        return data;
-      };
+          var lastBitArr = [];
+          var finalScore = 1;
+          var binMax = patternLen + textLen;
 
-      // From the results, push into a new array only the item identifier (if specified)
-      // of the entire item.  This is because we don't want to return the <results>,
-      // since it contains other metadata
-      for (i = 0, len = results.length; i < len; i++) {
-        replaceValue(i);
-        item = getItemAtIndex(i);
-        finalOutput.push(item);
-      }
+          var mask = 1 << patternLen - 1;
 
-      return finalOutput;
-    };
+          for (var _i = 0; _i < patternLen; _i += 1) {
+            // Scan for the best match; each iteration allows for one more error.
+            // Run a binary search to determine how far from the match location we can stray
+            // at this error level.
+            var binMin = 0;
+            var binMid = binMax;
 
-    // Helpers
+            while (binMin < binMid) {
+              var _score3 = bitapScore(pattern, {
+                errors: _i,
+                currentLocation: expectedLocation + binMid,
+                expectedLocation: expectedLocation,
+                distance: distance
+              });
 
-    function deepValue(obj, path, list) {
-      var firstSegment;
-      var remaining;
-      var dotIndex;
-      var value;
-      var i;
-      var len;
-
-      if (!path) {
-        // If there's no path left, we've gotten to the object we care about.
-        list.push(obj);
-      } else {
-        dotIndex = path.indexOf('.');
-
-        if (dotIndex !== -1) {
-          firstSegment = path.slice(0, dotIndex);
-          remaining = path.slice(dotIndex + 1);
-        } else {
-          firstSegment = path;
-        }
-
-        value = obj[firstSegment];
-        if (value !== null && value !== undefined) {
-          if (!remaining && (typeof value === 'string' || typeof value === 'number')) {
-            list.push(value);
-          } else if (isArray(value)) {
-            // Search each item in the array.
-            for (i = 0, len = value.length; i < len; i++) {
-              deepValue(value[i], remaining, list);
-            }
-          } else if (remaining) {
-            // An object. Recurse further.
-            deepValue(value, remaining, list);
-          }
-        }
-      }
-
-      return list;
-    }
-
-    function isArray(obj) {
-      return Object.prototype.toString.call(obj) === '[object Array]';
-    }
-
-    /**
-     * Adapted from "Diff, Match and Patch", by Google
-     *
-     *   http://code.google.com/p/google-diff-match-patch/
-     *
-     * Modified by: Kirollos Risk <kirollos@gmail.com>
-     * -----------------------------------------------
-     * Details: the algorithm and structure was modified to allow the creation of
-     * <Searcher> instances with a <search> method which does the actual
-     * bitap search. The <pattern> (the string that is searched for) is only defined
-     * once per instance and thus it eliminates redundant re-creation when searching
-     * over a list of strings.
-     *
-     * Licensed under the Apache License, Version 2.0 (the "License")
-     * you may not use this file except in compliance with the License.
-     *
-     * @constructor
-     */
-    function BitapSearcher(pattern, options) {
-      options = options || {};
-      this.options = options;
-      this.options.location = options.location || BitapSearcher.defaultOptions.location;
-      this.options.distance = 'distance' in options ? options.distance : BitapSearcher.defaultOptions.distance;
-      this.options.threshold = 'threshold' in options ? options.threshold : BitapSearcher.defaultOptions.threshold;
-      this.options.maxPatternLength = options.maxPatternLength || BitapSearcher.defaultOptions.maxPatternLength;
-
-      this.pattern = options.caseSensitive ? pattern : pattern.toLowerCase();
-      this.patternLen = pattern.length;
-
-      if (this.patternLen <= this.options.maxPatternLength) {
-        this.matchmask = 1 << this.patternLen - 1;
-        this.patternAlphabet = this._calculatePatternAlphabet();
-      }
-    }
-
-    BitapSearcher.defaultOptions = {
-      // Approximately where in the text is the pattern expected to be found?
-      location: 0,
-
-      // Determines how close the match must be to the fuzzy location (specified above).
-      // An exact letter match which is 'distance' characters away from the fuzzy location
-      // would score as a complete mismatch. A distance of '0' requires the match be at
-      // the exact location specified, a threshold of '1000' would require a perfect match
-      // to be within 800 characters of the fuzzy location to be found using a 0.8 threshold.
-      distance: 100,
-
-      // At what point does the match algorithm give up. A threshold of '0.0' requires a perfect match
-      // (of both letters and location), a threshold of '1.0' would match anything.
-      threshold: 0.6,
-
-      // Machine word size
-      maxPatternLength: 32
-    };
-
-    /**
-     * Initialize the alphabet for the Bitap algorithm.
-     * @return {Object} Hash of character locations.
-     * @private
-     */
-    BitapSearcher.prototype._calculatePatternAlphabet = function () {
-      var mask = {},
-          i = 0;
-
-      for (i = 0; i < this.patternLen; i++) {
-        mask[this.pattern.charAt(i)] = 0;
-      }
-
-      for (i = 0; i < this.patternLen; i++) {
-        mask[this.pattern.charAt(i)] |= 1 << this.pattern.length - i - 1;
-      }
-
-      return mask;
-    };
-
-    /**
-     * Compute and return the score for a match with `e` errors and `x` location.
-     * @param {number} errors Number of errors in match.
-     * @param {number} location Location of match.
-     * @return {number} Overall score for match (0.0 = good, 1.0 = bad).
-     * @private
-     */
-    BitapSearcher.prototype._bitapScore = function (errors, location) {
-      var accuracy = errors / this.patternLen,
-          proximity = Math.abs(this.options.location - location);
-
-      if (!this.options.distance) {
-        // Dodge divide by zero error.
-        return proximity ? 1.0 : accuracy;
-      }
-      return accuracy + proximity / this.options.distance;
-    };
-
-    /**
-     * Compute and return the result of the search
-     * @param {string} text The text to search in
-     * @return {{isMatch: boolean, score: number}} Literal containing:
-     *                          isMatch - Whether the text is a match or not
-     *                          score - Overall score for the match
-     * @public
-     */
-    BitapSearcher.prototype.search = function (text) {
-      var options = this.options;
-      var i;
-      var j;
-      var textLen;
-      var findAllMatches;
-      var location;
-      var threshold;
-      var bestLoc;
-      var binMin;
-      var binMid;
-      var binMax;
-      var start, finish;
-      var bitArr;
-      var lastBitArr;
-      var charMatch;
-      var score;
-      var locations;
-      var matches;
-      var isMatched;
-      var matchMask;
-      var matchedIndices;
-      var matchesLen;
-      var match;
-
-      text = options.caseSensitive ? text : text.toLowerCase();
-
-      if (this.pattern === text) {
-        // Exact match
-        return {
-          isMatch: true,
-          score: 0,
-          matchedIndices: [[0, text.length - 1]]
-        };
-      }
-
-      // When pattern length is greater than the machine word length, just do a a regex comparison
-      if (this.patternLen > options.maxPatternLength) {
-        matches = text.match(new RegExp(this.pattern.replace(options.tokenSeparator, '|')));
-        isMatched = !!matches;
-
-        if (isMatched) {
-          matchedIndices = [];
-          for (i = 0, matchesLen = matches.length; i < matchesLen; i++) {
-            match = matches[i];
-            matchedIndices.push([text.indexOf(match), match.length - 1]);
-          }
-        }
-
-        return {
-          isMatch: isMatched,
-          // TODO: revisit this score
-          score: isMatched ? 0.5 : 1,
-          matchedIndices: matchedIndices
-        };
-      }
-
-      findAllMatches = options.findAllMatches;
-
-      location = options.location;
-      // Set starting location at beginning text and initialize the alphabet.
-      textLen = text.length;
-      // Highest score beyond which we give up.
-      threshold = options.threshold;
-      // Is there a nearby exact match? (speedup)
-      bestLoc = text.indexOf(this.pattern, location);
-
-      // a mask of the matches
-      matchMask = [];
-      for (i = 0; i < textLen; i++) {
-        matchMask[i] = 0;
-      }
-
-      if (bestLoc != -1) {
-        threshold = Math.min(this._bitapScore(0, bestLoc), threshold);
-        // What about in the other direction? (speed up)
-        bestLoc = text.lastIndexOf(this.pattern, location + this.patternLen);
-
-        if (bestLoc != -1) {
-          threshold = Math.min(this._bitapScore(0, bestLoc), threshold);
-        }
-      }
-
-      bestLoc = -1;
-      score = 1;
-      locations = [];
-      binMax = this.patternLen + textLen;
-
-      for (i = 0; i < this.patternLen; i++) {
-        // Scan for the best match; each iteration allows for one more error.
-        // Run a binary search to determine how far from the match location we can stray
-        // at this error level.
-        binMin = 0;
-        binMid = binMax;
-        while (binMin < binMid) {
-          if (this._bitapScore(i, location + binMid) <= threshold) {
-            binMin = binMid;
-          } else {
-            binMax = binMid;
-          }
-          binMid = Math.floor((binMax - binMin) / 2 + binMin);
-        }
-
-        // Use the result from this iteration as the maximum for the next.
-        binMax = binMid;
-        start = Math.max(1, location - binMid + 1);
-        if (findAllMatches) {
-          finish = textLen;
-        } else {
-          finish = Math.min(location + binMid, textLen) + this.patternLen;
-        }
-
-        // Initialize the bit array
-        bitArr = Array(finish + 2);
-
-        bitArr[finish + 1] = (1 << i) - 1;
-
-        for (j = finish; j >= start; j--) {
-          charMatch = this.patternAlphabet[text.charAt(j - 1)];
-
-          if (charMatch) {
-            matchMask[j - 1] = 1;
-          }
-
-          if (i === 0) {
-            // First pass: exact match.
-            bitArr[j] = (bitArr[j + 1] << 1 | 1) & charMatch;
-          } else {
-            // Subsequent passes: fuzzy match.
-            bitArr[j] = (bitArr[j + 1] << 1 | 1) & charMatch | ((lastBitArr[j + 1] | lastBitArr[j]) << 1 | 1) | lastBitArr[j + 1];
-          }
-          if (bitArr[j] & this.matchmask) {
-            score = this._bitapScore(i, j - 1);
-
-            // This match will almost certainly be better than any existing match.
-            // But check anyway.
-            if (score <= threshold) {
-              // Indeed it is
-              threshold = score;
-              bestLoc = j - 1;
-              locations.push(bestLoc);
-
-              if (bestLoc > location) {
-                // When passing loc, don't exceed our current distance from loc.
-                start = Math.max(1, 2 * location - bestLoc);
+              if (_score3 <= currentThreshold) {
+                binMin = binMid;
               } else {
-                // Already passed loc, downhill from here on in.
-                break;
+                binMax = binMid;
+              }
+
+              binMid = Math.floor((binMax - binMin) / 2 + binMin);
+            }
+
+            // Use the result from this iteration as the maximum for the next.
+            binMax = binMid;
+
+            var start = Math.max(1, expectedLocation - binMid + 1);
+            var finish = findAllMatches ? textLen : Math.min(expectedLocation + binMid, textLen) + patternLen;
+
+            // Initialize the bit array
+            var bitArr = Array(finish + 2);
+
+            bitArr[finish + 1] = (1 << _i) - 1;
+
+            for (var j = finish; j >= start; j -= 1) {
+              var currentLocation = j - 1;
+              var charMatch = patternAlphabet[text.charAt(currentLocation)];
+
+              if (charMatch) {
+                matchMask[currentLocation] = 1;
+              }
+
+              // First pass: exact match
+              bitArr[j] = (bitArr[j + 1] << 1 | 1) & charMatch;
+
+              // Subsequent passes: fuzzy match
+              if (_i !== 0) {
+                bitArr[j] |= (lastBitArr[j + 1] | lastBitArr[j]) << 1 | 1 | lastBitArr[j + 1];
+              }
+
+              if (bitArr[j] & mask) {
+                finalScore = bitapScore(pattern, {
+                  errors: _i,
+                  currentLocation: currentLocation,
+                  expectedLocation: expectedLocation,
+                  distance: distance
+                });
+
+                // This match will almost certainly be better than any existing match.
+                // But check anyway.
+                if (finalScore <= currentThreshold) {
+                  // Indeed it is
+                  currentThreshold = finalScore;
+                  bestLocation = currentLocation;
+
+                  // Already passed `loc`, downhill from here on in.
+                  if (bestLocation <= expectedLocation) {
+                    break;
+                  }
+
+                  // When passing `bestLocation`, don't exceed our current distance from `expectedLocation`.
+                  start = Math.max(1, 2 * expectedLocation - bestLocation);
+                }
               }
             }
+
+            // No hope for a (better) match at greater error levels.  
+            var _score2 = bitapScore(pattern, {
+              errors: _i + 1,
+              currentLocation: expectedLocation,
+              expectedLocation: expectedLocation,
+              distance: distance
+            });
+
+            if (_score2 > currentThreshold) {
+              break;
+            }
+
+            lastBitArr = bitArr;
+          }
+
+          // Count exact matches (those with a score of 0) to be "almost" exact
+          return {
+            isMatch: bestLocation >= 0,
+            score: finalScore === 0 ? 0.001 : finalScore,
+            matchedIndices: matchedIndices(matchMask, minMatchCharLength)
+          };
+        };
+
+        /***/
+      },
+      /* 8 */
+      /***/function (module, exports, __webpack_require__) {
+
+        "use strict";
+
+        var _createClass = function () {
+          function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+              var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+            }
+          }return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+          };
+        }();
+
+        function _classCallCheck(instance, Constructor) {
+          if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
           }
         }
 
-        // No hope for a (better) match at greater error levels.
-        if (this._bitapScore(i + 1, location) > threshold) {
-          break;
-        }
-        lastBitArr = bitArr;
-      }
+        var Bitap = __webpack_require__(1);
+        var deepValue = __webpack_require__(2);
+        var isArray = __webpack_require__(0);
 
-      matchedIndices = this._getMatchedIndices(matchMask);
+        var Fuse = function () {
+          function Fuse(list, _ref) {
+            var _ref$location = _ref.location,
+                location = _ref$location === undefined ? 0 : _ref$location,
+                _ref$distance = _ref.distance,
+                distance = _ref$distance === undefined ? 100 : _ref$distance,
+                _ref$threshold = _ref.threshold,
+                threshold = _ref$threshold === undefined ? 0.6 : _ref$threshold,
+                _ref$maxPatternLength = _ref.maxPatternLength,
+                maxPatternLength = _ref$maxPatternLength === undefined ? 32 : _ref$maxPatternLength,
+                _ref$caseSensitive = _ref.caseSensitive,
+                caseSensitive = _ref$caseSensitive === undefined ? false : _ref$caseSensitive,
+                _ref$tokenSeparator = _ref.tokenSeparator,
+                tokenSeparator = _ref$tokenSeparator === undefined ? / +/g : _ref$tokenSeparator,
+                _ref$findAllMatches = _ref.findAllMatches,
+                findAllMatches = _ref$findAllMatches === undefined ? false : _ref$findAllMatches,
+                _ref$minMatchCharLeng = _ref.minMatchCharLength,
+                minMatchCharLength = _ref$minMatchCharLeng === undefined ? 1 : _ref$minMatchCharLeng,
+                _ref$id = _ref.id,
+                id = _ref$id === undefined ? null : _ref$id,
+                _ref$keys = _ref.keys,
+                keys = _ref$keys === undefined ? [] : _ref$keys,
+                _ref$shouldSort = _ref.shouldSort,
+                shouldSort = _ref$shouldSort === undefined ? true : _ref$shouldSort,
+                _ref$getFn = _ref.getFn,
+                getFn = _ref$getFn === undefined ? deepValue : _ref$getFn,
+                _ref$sortFn = _ref.sortFn,
+                sortFn = _ref$sortFn === undefined ? function (a, b) {
+              return a.score - b.score;
+            } : _ref$sortFn,
+                _ref$tokenize = _ref.tokenize,
+                tokenize = _ref$tokenize === undefined ? false : _ref$tokenize,
+                _ref$matchAllTokens = _ref.matchAllTokens,
+                matchAllTokens = _ref$matchAllTokens === undefined ? false : _ref$matchAllTokens,
+                _ref$includeMatches = _ref.includeMatches,
+                includeMatches = _ref$includeMatches === undefined ? false : _ref$includeMatches,
+                _ref$includeScore = _ref.includeScore,
+                includeScore = _ref$includeScore === undefined ? false : _ref$includeScore,
+                _ref$verbose = _ref.verbose,
+                verbose = _ref$verbose === undefined ? false : _ref$verbose;
 
-      // Count exact matches (those with a score of 0) to be "almost" exact
-      return {
-        isMatch: bestLoc >= 0,
-        score: score === 0 ? 0.001 : score,
-        matchedIndices: matchedIndices
-      };
-    };
+            _classCallCheck(this, Fuse);
 
-    BitapSearcher.prototype._getMatchedIndices = function (matchMask) {
-      var matchedIndices = [];
-      var start = -1;
-      var end = -1;
-      var i = 0;
-      var match;
-      var len = matchMask.length;
-      for (; i < len; i++) {
-        match = matchMask[i];
-        if (match && start === -1) {
-          start = i;
-        } else if (!match && start !== -1) {
-          end = i - 1;
-          if (end - start + 1 >= this.options.minMatchCharLength) {
-            matchedIndices.push([start, end]);
+            this.options = {
+              location: location,
+              distance: distance,
+              threshold: threshold,
+              maxPatternLength: maxPatternLength,
+              isCaseSensitive: caseSensitive,
+              tokenSeparator: tokenSeparator,
+              findAllMatches: findAllMatches,
+              minMatchCharLength: minMatchCharLength,
+              id: id,
+              keys: keys,
+              includeMatches: includeMatches,
+              includeScore: includeScore,
+              shouldSort: shouldSort,
+              getFn: getFn,
+              sortFn: sortFn,
+              verbose: verbose,
+              tokenize: tokenize,
+              matchAllTokens: matchAllTokens
+            };
+
+            this.setCollection(list);
           }
-          start = -1;
-        }
-      }
-      if (matchMask[i - 1]) {
-        if (i - 1 - start + 1 >= this.options.minMatchCharLength) {
-          matchedIndices.push([start, i - 1]);
-        }
-      }
-      return matchedIndices;
-    };
 
-    // Export to Common JS Loader
-    {
-      // Node. Does not work with strict CommonJS, but
-      // only CommonJS-like environments that support module.exports,
-      // like Node.
-      module.exports = Fuse;
-    }
-  })(commonjsGlobal);
+          _createClass(Fuse, [{
+            key: 'setCollection',
+            value: function setCollection(list) {
+              this.list = list;
+              return list;
+            }
+          }, {
+            key: 'search',
+            value: function search(pattern) {
+              this._log('---------\nSearch pattern: "' + pattern + '"');
+
+              var _prepareSearchers2 = this._prepareSearchers(pattern),
+                  tokenSearchers = _prepareSearchers2.tokenSearchers,
+                  fullSearcher = _prepareSearchers2.fullSearcher;
+
+              var _search2 = this._search(tokenSearchers, fullSearcher),
+                  weights = _search2.weights,
+                  results = _search2.results;
+
+              this._computeScore(weights, results);
+
+              if (this.options.shouldSort) {
+                this._sort(results);
+              }
+
+              return this._format(results);
+            }
+          }, {
+            key: '_prepareSearchers',
+            value: function _prepareSearchers() {
+              var pattern = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+              var tokenSearchers = [];
+
+              if (this.options.tokenize) {
+                // Tokenize on the separator
+                var tokens = pattern.split(this.options.tokenSeparator);
+                for (var i = 0, len = tokens.length; i < len; i += 1) {
+                  tokenSearchers.push(new Bitap(tokens[i], this.options));
+                }
+              }
+
+              var fullSearcher = new Bitap(pattern, this.options);
+
+              return { tokenSearchers: tokenSearchers, fullSearcher: fullSearcher };
+            }
+          }, {
+            key: '_search',
+            value: function _search() {
+              var tokenSearchers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+              var fullSearcher = arguments[1];
+
+              var list = this.list;
+              var resultMap = {};
+              var results = [];
+
+              // Check the first item in the list, if it's a string, then we assume
+              // that every item in the list is also a string, and thus it's a flattened array.
+              if (typeof list[0] === 'string') {
+                // Iterate over every item
+                for (var i = 0, len = list.length; i < len; i += 1) {
+                  this._analyze({
+                    key: '',
+                    value: list[i],
+                    record: i,
+                    index: i
+                  }, {
+                    resultMap: resultMap,
+                    results: results,
+                    tokenSearchers: tokenSearchers,
+                    fullSearcher: fullSearcher
+                  });
+                }
+
+                return { weights: null, results: results };
+              }
+
+              // Otherwise, the first item is an Object (hopefully), and thus the searching
+              // is done on the values of the keys of each item.
+              var weights = {};
+              for (var _i = 0, _len = list.length; _i < _len; _i += 1) {
+                var item = list[_i];
+                // Iterate over every key
+                for (var j = 0, keysLen = this.options.keys.length; j < keysLen; j += 1) {
+                  var key = this.options.keys[j];
+                  if (typeof key !== 'string') {
+                    weights[key.name] = {
+                      weight: 1 - key.weight || 1
+                    };
+                    if (key.weight <= 0 || key.weight > 1) {
+                      throw new Error('Key weight has to be > 0 and <= 1');
+                    }
+                    key = key.name;
+                  } else {
+                    weights[key] = {
+                      weight: 1
+                    };
+                  }
+
+                  this._analyze({
+                    key: key,
+                    value: this.options.getFn(item, key),
+                    record: item,
+                    index: _i
+                  }, {
+                    resultMap: resultMap,
+                    results: results,
+                    tokenSearchers: tokenSearchers,
+                    fullSearcher: fullSearcher
+                  });
+                }
+              }
+
+              return { weights: weights, results: results };
+            }
+          }, {
+            key: '_analyze',
+            value: function _analyze(_ref2, _ref3) {
+              var key = _ref2.key,
+                  value = _ref2.value,
+                  record = _ref2.record,
+                  index = _ref2.index;
+              var _ref3$tokenSearchers = _ref3.tokenSearchers,
+                  tokenSearchers = _ref3$tokenSearchers === undefined ? [] : _ref3$tokenSearchers,
+                  _ref3$fullSearcher = _ref3.fullSearcher,
+                  fullSearcher = _ref3$fullSearcher === undefined ? [] : _ref3$fullSearcher,
+                  _ref3$resultMap = _ref3.resultMap,
+                  resultMap = _ref3$resultMap === undefined ? {} : _ref3$resultMap,
+                  _ref3$results = _ref3.results,
+                  results = _ref3$results === undefined ? [] : _ref3$results;
+
+              // Check if the texvaluet can be searched
+              if (value === undefined || value === null) {
+                return;
+              }
+
+              var exists = false;
+              var averageScore = -1;
+              var numTextMatches = 0;
+
+              if (typeof value === 'string') {
+                this._log('\nKey: ' + (key === '' ? '-' : key));
+
+                var mainSearchResult = fullSearcher.search(value);
+                this._log('Full text: "' + value + '", score: ' + mainSearchResult.score);
+
+                if (this.options.tokenize) {
+                  var words = value.split(this.options.tokenSeparator);
+                  var scores = [];
+
+                  for (var i = 0; i < tokenSearchers.length; i += 1) {
+                    var tokenSearcher = tokenSearchers[i];
+
+                    this._log('\nPattern: "' + tokenSearcher.pattern + '"');
+
+                    // let tokenScores = []
+                    var hasMatchInText = false;
+
+                    for (var j = 0; j < words.length; j += 1) {
+                      var word = words[j];
+                      var tokenSearchResult = tokenSearcher.search(word);
+                      var obj = {};
+                      if (tokenSearchResult.isMatch) {
+                        obj[word] = tokenSearchResult.score;
+                        exists = true;
+                        hasMatchInText = true;
+                        scores.push(tokenSearchResult.score);
+                      } else {
+                        obj[word] = 1;
+                        if (!this.options.matchAllTokens) {
+                          scores.push(1);
+                        }
+                      }
+                      this._log('Token: "' + word + '", score: ' + obj[word]);
+                      // tokenScores.push(obj)
+                    }
+
+                    if (hasMatchInText) {
+                      numTextMatches += 1;
+                    }
+                  }
+
+                  averageScore = scores[0];
+                  var scoresLen = scores.length;
+                  for (var _i2 = 1; _i2 < scoresLen; _i2 += 1) {
+                    averageScore += scores[_i2];
+                  }
+                  averageScore = averageScore / scoresLen;
+
+                  this._log('Token score average:', averageScore);
+                }
+
+                var finalScore = mainSearchResult.score;
+                if (averageScore > -1) {
+                  finalScore = (finalScore + averageScore) / 2;
+                }
+
+                this._log('Score average:', finalScore);
+
+                var checkTextMatches = this.options.tokenize && this.options.matchAllTokens ? numTextMatches >= tokenSearchers.length : true;
+
+                this._log('\nCheck Matches: ' + checkTextMatches);
+
+                // If a match is found, add the item to <rawResults>, including its score
+                if ((exists || mainSearchResult.isMatch) && checkTextMatches) {
+                  // Check if the item already exists in our results
+                  var existingResult = resultMap[index];
+
+                  if (existingResult) {
+                    // Use the lowest score
+                    // existingResult.score, bitapResult.score
+                    existingResult.output.push({
+                      key: key,
+                      score: finalScore,
+                      matchedIndices: mainSearchResult.matchedIndices
+                    });
+                  } else {
+                    // Add it to the raw result list
+                    resultMap[index] = {
+                      item: record,
+                      output: [{
+                        key: key,
+                        score: finalScore,
+                        matchedIndices: mainSearchResult.matchedIndices
+                      }]
+                    };
+
+                    results.push(resultMap[index]);
+                  }
+                }
+              } else if (isArray(value)) {
+                for (var _i3 = 0, len = value.length; _i3 < len; _i3 += 1) {
+                  this._analyze({
+                    key: key,
+                    value: value[_i3],
+                    record: record,
+                    index: index
+                  }, {
+                    resultMap: resultMap,
+                    results: results,
+                    tokenSearchers: tokenSearchers,
+                    fullSearcher: fullSearcher
+                  });
+                }
+              }
+            }
+          }, {
+            key: '_computeScore',
+            value: function _computeScore(weights, results) {
+              this._log('\n\nComputing score:\n');
+
+              for (var i = 0, len = results.length; i < len; i += 1) {
+                var output = results[i].output;
+                var scoreLen = output.length;
+
+                var totalScore = 0;
+                var bestScore = 1;
+
+                for (var j = 0; j < scoreLen; j += 1) {
+                  var score = output[j].score;
+                  var weight = weights ? weights[output[j].key].weight : 1;
+                  var nScore = score * weight;
+
+                  if (weight !== 1) {
+                    bestScore = Math.min(bestScore, nScore);
+                  } else {
+                    output[j].nScore = nScore;
+                    totalScore += nScore;
+                  }
+                }
+
+                results[i].score = bestScore === 1 ? totalScore / scoreLen : bestScore;
+
+                this._log(results[i]);
+              }
+            }
+          }, {
+            key: '_sort',
+            value: function _sort(results) {
+              this._log('\n\nSorting....');
+              results.sort(this.options.sortFn);
+            }
+          }, {
+            key: '_format',
+            value: function _format(results) {
+              var finalOutput = [];
+
+              this._log('\n\nOutput:\n\n', results);
+
+              var transformers = [];
+
+              if (this.options.includeMatches) {
+                transformers.push(function (result, data) {
+                  var output = result.output;
+                  data.matches = [];
+
+                  for (var i = 0, len = output.length; i < len; i += 1) {
+                    var item = output[i];
+                    var obj = {
+                      indices: item.matchedIndices
+                    };
+                    if (item.key) {
+                      obj.key = item.key;
+                    }
+                    data.matches.push(obj);
+                  }
+                });
+              }
+
+              if (this.options.includeScore) {
+                transformers.push(function (result, data) {
+                  data.score = result.score;
+                });
+              }
+
+              for (var i = 0, len = results.length; i < len; i += 1) {
+                var result = results[i];
+
+                if (this.options.id) {
+                  result.item = this.options.getFn(result.item, this.options.id)[0];
+                }
+
+                if (!transformers.length) {
+                  finalOutput.push(result.item);
+                  continue;
+                }
+
+                var data = {
+                  item: result.item
+                };
+
+                for (var j = 0, _len2 = transformers.length; j < _len2; j += 1) {
+                  transformers[j](result, data);
+                }
+
+                finalOutput.push(data);
+              }
+
+              return finalOutput;
+            }
+          }, {
+            key: '_log',
+            value: function _log() {
+              if (this.options.verbose) {
+                var _console;
+
+                (_console = console).log.apply(_console, arguments);
+              }
+            }
+          }]);
+
+          return Fuse;
+        }();
+
+        module.exports = Fuse;
+
+        /***/
+      }])
+    );
+  });
+  
 });
+
+var Fuse = unwrapExports(fuse);
 
 function filterResultsFactory(store) {
   var FilterResults = function (_Component) {
@@ -2178,7 +2540,7 @@ function filterResultsFactory(store) {
           var matches = search.match(regex) || [];
           search = search.replace(regex, '').trim();
           matches.forEach(function (match) {
-            items = handler(match, items, fuse);
+            items = handler(match, items, Fuse);
           });
         });
         return { items: items, search: search };
@@ -2193,8 +2555,8 @@ function filterResultsFactory(store) {
         if (search.trim() === '') {
           return this.props.defaultAllItems ? items : [];
         } else {
-          var fuse$$1 = new fuse(items, this.props.fuseConfig);
-          return fuse$$1.search(search);
+          var fuse = new Fuse(items, this.props.fuseConfig);
+          return fuse.search(search);
         }
       }
     }, {
@@ -2209,28 +2571,28 @@ function filterResultsFactory(store) {
 
   FilterResults.displayName = 'FilterResults';
   FilterResults.propTypes = {
-    children: PropTypes.func.isRequired,
-    items: PropTypes.array.isRequired,
-    defaultAllItems: PropTypes.bool,
-    fuseConfig: PropTypes.shape({
-      keys: PropTypes.array.isRequired,
-      id: PropTypes.string,
-      caseSensitive: PropTypes.bool,
-      shouldSort: PropTypes.bool,
-      searchFn: PropTypes.func,
-      getFn: PropTypes.func,
-      sortFn: PropTypes.func,
-      location: PropTypes.number,
-      threshold: PropTypes.number,
-      distance: PropTypes.number,
-      maxPatternLength: PropTypes.number,
-      verbose: PropTypes.bool,
-      tokenize: PropTypes.bool,
-      tokenSeparator: PropTypes.any
+    children: index.func.isRequired,
+    items: index.array.isRequired,
+    defaultAllItems: index.bool,
+    fuseConfig: index.shape({
+      keys: index.array.isRequired,
+      id: index.string,
+      caseSensitive: index.bool,
+      shouldSort: index.bool,
+      searchFn: index.func,
+      getFn: index.func,
+      sortFn: index.func,
+      location: index.number,
+      threshold: index.number,
+      distance: index.number,
+      maxPatternLength: index.number,
+      verbose: index.bool,
+      tokenize: index.bool,
+      tokenSeparator: index.any
     }).isRequired,
-    prefilters: PropTypes.arrayOf(PropTypes.shape({
-      regex: PropTypes.any.isRequired,
-      handler: PropTypes.func.isRequired
+    prefilters: index.arrayOf(index.shape({
+      regex: index.any.isRequired,
+      handler: index.func.isRequired
     }).isRequired).isRequired
   };
   FilterResults.defaultProps = {

@@ -1,4 +1,5 @@
-import {PropTypes, Component} from 'react';
+import {Component} from 'react';
+import PropTypes from 'prop-types';
 import Fuse from 'fuse.js';
 
 export default function filterResultsFactory(store) {
@@ -10,20 +11,24 @@ export default function filterResultsFactory(store) {
       items: PropTypes.array.isRequired,
       defaultAllItems: PropTypes.bool,
       fuseConfig: PropTypes.shape({
-        keys: PropTypes.array.isRequired,
-        id: PropTypes.string,
+        location: PropTypes.number,
+        distance: PropTypes.number,
+        threshold: PropTypes.number,
+        maxPatternLength: PropTypes.number,
         caseSensitive: PropTypes.bool,
+        tokenSeparator: PropTypes.any,
+        findAllMatches: PropTypes.bool,
+        minMatchCharLength: PropTypes.number,
+        id: PropTypes.string,
+        keys: PropTypes.array.isRequired,
         shouldSort: PropTypes.bool,
-        searchFn: PropTypes.func,
         getFn: PropTypes.func,
         sortFn: PropTypes.func,
-        location: PropTypes.number,
-        threshold: PropTypes.number,
-        distance: PropTypes.number,
-        maxPatternLength: PropTypes.number,
-        verbose: PropTypes.bool,
         tokenize: PropTypes.bool,
-        tokenSeparator: PropTypes.any
+        matchAllTokens: PropTypes.bool,
+        includeScore: PropTypes.bool,
+        includeMatches: PropTypes.bool,
+        verbose: PropTypes.bool
       }).isRequired,
       prefilters: PropTypes.arrayOf(
         PropTypes.shape({

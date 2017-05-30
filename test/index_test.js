@@ -1,6 +1,6 @@
 import expect from 'expect';
 import {mount} from 'enzyme';
-import React, { } from 'react';
+import React from 'react';
 import fuzzyFilterFactory from '../src';
 
 const items = [
