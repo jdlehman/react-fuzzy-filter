@@ -1,4 +1,3 @@
-import expect from 'expect';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { Subject } from 'rxjs/Subject';
@@ -43,7 +42,7 @@ describe('InputFilter', () => {
     let component;
     let spy;
     beforeEach(() => {
-      spy = expect.createSpy();
+      spy = jest.fn();
       component = shallow(<InputFilter onChange={spy} />);
     });
 
