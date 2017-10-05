@@ -1,14 +1,14 @@
 module.exports = {
   plugins: ['prettier'],
 
-  extends: [
-    'panoply',
-    'panoply/browser',
-    'panoply/mocha',
-    'panoply/react',
-    'prettier',
-    'prettier/react'
-  ],
+  env: {
+    browser: true,
+    es6: true
+  },
+
+  parser: 'babel-eslint',
+
+  extends: ['prettier', 'prettier/react'],
 
   globals: {
     global: true,

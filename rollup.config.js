@@ -4,7 +4,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
 
 export default {
-  entry: 'src/index.js',
+  input: 'src/index.js',
   external: ['react'],
   plugins: [
     nodeResolve(),
@@ -23,13 +23,13 @@ export default {
   globals: {
     react: 'React'
   },
-  moduleName: 'ReactFuzzyFilter',
+  name: 'ReactFuzzyFilter',
   moduleId: 'react-fuzzy-filter',
-  targets: [
-    {format: 'umd', dest: 'dist/react-fuzzy-filter.umd.js'},
-    {format: 'iife', dest: 'dist/react-fuzzy-filter.browser.js'},
-    {format: 'amd', dest: 'dist/react-fuzzy-filter.amd.js'},
-    {format: 'cjs', dest: 'dist/react-fuzzy-filter.cjs.js'},
-    {format: 'es', dest: 'dist/react-fuzzy-filter.es-modules.js'}
+  output: [
+    { format: 'umd', file: 'dist/react-fuzzy-filter.umd.js' },
+    { format: 'iife', file: 'dist/react-fuzzy-filter.browser.js' },
+    { format: 'amd', file: 'dist/react-fuzzy-filter.amd.js' },
+    { format: 'cjs', file: 'dist/react-fuzzy-filter.cjs.js' },
+    { format: 'es', file: 'dist/react-fuzzy-filter.es-modules.js' }
   ]
 };
