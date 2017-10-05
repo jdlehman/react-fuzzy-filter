@@ -22,9 +22,7 @@ function componentFactory(inputFilterProps, filterResultsProps, resultsSpy) {
         <h2>Separate Components</h2>
         <InputFilter {...inputFilterProps} />
         <h4>Any amount of content between</h4>
-        <FilterResults {...filterResultsProps}>
-          {resultsSpy}
-        </FilterResults>
+        <FilterResults {...filterResultsProps}>{resultsSpy}</FilterResults>
       </div>
     );
   }
