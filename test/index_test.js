@@ -1,4 +1,3 @@
-import expect from 'expect';
 import { mount } from 'enzyme';
 import React from 'react';
 import fuzzyFilterFactory from '../src';
@@ -33,7 +32,7 @@ function componentFactory(inputFilterProps, filterResultsProps, resultsSpy) {
 describe('fuzzyFilterFactory', () => {
   let resultsSpy;
   beforeEach(() => {
-    resultsSpy = expect.createSpy().andReturn(<div />);
+    resultsSpy = jest.fn().mockImplementation(() => <div />);
   });
 
   it('returns FilterResults and InputFilter components', () => {
@@ -51,8 +50,9 @@ describe('fuzzyFilterFactory', () => {
       resultsSpy
     );
     const component = mount(<MyComponent />);
-    expect(resultsSpy.calls.length).toEqual(2);
-    expect(resultsSpy.calls[1].arguments[0]).toEqual([
+    expect(resultsSpy).toHaveBeenCalledTimes(2);
+    expect(resultsSpy.mock.calls.length).toEqual(2);
+    expect(resultsSpy).toHaveBeenLastCalledWith([
       { name: 'one', searchData: 'hello' },
       { name: 'two', searchData: 'hello' },
       { name: 'three', searchData: 'goodbye' },
@@ -62,8 +62,8 @@ describe('fuzzyFilterFactory', () => {
     component.find('input').simulate('change', {
       target: { value: 'ello' }
     });
-    expect(resultsSpy.calls.length).toEqual(3);
-    expect(resultsSpy.calls[2].arguments[0]).toEqual([
+    expect(resultsSpy).toHaveBeenCalledTimes(3);
+    expect(resultsSpy).toHaveBeenLastCalledWith([
       { name: 'one', searchData: 'hello' },
       { name: 'two', searchData: 'hello' }
     ]);
@@ -71,8 +71,8 @@ describe('fuzzyFilterFactory', () => {
     component.find('input').simulate('change', {
       target: { value: 'gdbye' }
     });
-    expect(resultsSpy.calls.length).toEqual(4);
-    expect(resultsSpy.calls[3].arguments[0]).toEqual([
+    expect(resultsSpy).toHaveBeenCalledTimes(4);
+    expect(resultsSpy).toHaveBeenLastCalledWith([
       { name: 'three', searchData: 'goodbye' }
     ]);
   });
@@ -84,8 +84,8 @@ describe('fuzzyFilterFactory', () => {
       resultsSpy
     );
     mount(<MyComponent />);
-    expect(resultsSpy.calls.length).toEqual(2);
-    expect(resultsSpy.calls[1].arguments[0]).toEqual([
+    expect(resultsSpy).toHaveBeenCalledTimes(2);
+    expect(resultsSpy).toHaveBeenLastCalledWith([
       { name: 'three', searchData: 'goodbye' }
     ]);
   });

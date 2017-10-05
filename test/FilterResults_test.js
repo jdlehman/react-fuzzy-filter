@@ -1,10 +1,9 @@
-import expect from 'expect';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { Subject } from 'rxjs/Subject';
 import filterResultsFactory from '../src/FilterResults';
 
-const filteredResultsSpy = expect.createSpy().andReturn(<div />);
+const filteredResultsSpy = jest.fn().mockImplementation(() => <div />);
 
 const items = [
   { name: 'one', searchData: 'hello', state: 'archived' },
@@ -22,7 +21,7 @@ describe('FilterResults', () => {
   const store = new Subject();
   beforeEach(() => {
     FilterResults = filterResultsFactory(store);
-    filteredResultsSpy.reset();
+    filteredResultsSpy.mockClear();
   });
 
   describe('#render', () => {
@@ -32,8 +31,8 @@ describe('FilterResults', () => {
           {filteredResultsSpy}
         </FilterResults>
       );
-      expect(filteredResultsSpy.calls.length).toEqual(1);
-      expect(filteredResultsSpy.calls[0].arguments[0]).toEqual(items);
+      expect(filteredResultsSpy.mock.calls.length).toEqual(1);
+      expect(filteredResultsSpy.mock.calls[0][0]).toEqual(items);
     });
 
     it('renders no items with empty search if defaultAllItems is false', () => {
@@ -46,8 +45,8 @@ describe('FilterResults', () => {
           {filteredResultsSpy}
         </FilterResults>
       );
-      expect(filteredResultsSpy.calls.length).toEqual(1);
-      expect(filteredResultsSpy.calls[0].arguments[0]).toEqual([]);
+      expect(filteredResultsSpy.mock.calls.length).toEqual(1);
+      expect(filteredResultsSpy.mock.calls[0][0]).toEqual([]);
     });
   });
 
@@ -59,15 +58,15 @@ describe('FilterResults', () => {
         </FilterResults>
       );
       component.setState({ search: 'hllo' });
-      expect(filteredResultsSpy.calls.length).toEqual(2);
-      expect(filteredResultsSpy.calls[1].arguments[0]).toEqual([
+      expect(filteredResultsSpy.mock.calls.length).toEqual(2);
+      expect(filteredResultsSpy.mock.calls[1][0]).toEqual([
         { name: 'one', searchData: 'hello', state: 'archived' },
         { name: 'two', searchData: 'hello', state: '' }
       ]);
 
       component.setState({ search: 'godby' });
-      expect(filteredResultsSpy.calls.length).toEqual(3);
-      expect(filteredResultsSpy.calls[2].arguments[0]).toEqual([
+      expect(filteredResultsSpy.mock.calls.length).toEqual(3);
+      expect(filteredResultsSpy.mock.calls[2][0]).toEqual([
         { name: 'three', searchData: 'goodbye', state: 'archived' }
       ]);
     });
@@ -83,12 +82,12 @@ describe('FilterResults', () => {
         </FilterResults>
       );
       component.setState({ search: 'hllo' });
-      expect(filteredResultsSpy.calls.length).toEqual(2);
-      expect(filteredResultsSpy.calls[1].arguments[0]).toEqual([]);
+      expect(filteredResultsSpy.mock.calls.length).toEqual(2);
+      expect(filteredResultsSpy.mock.calls[1][0]).toEqual([]);
 
       component.setState({ search: 'ree' });
-      expect(filteredResultsSpy.calls.length).toEqual(3);
-      expect(filteredResultsSpy.calls[2].arguments[0]).toEqual(['three']);
+      expect(filteredResultsSpy.mock.calls.length).toEqual(3);
+      expect(filteredResultsSpy.mock.calls[2][0]).toEqual(['three']);
     });
 
     it('supports prefilters', () => {
@@ -118,21 +117,21 @@ describe('FilterResults', () => {
         </FilterResults>
       );
       component.setState({ search: 'archived' });
-      expect(filteredResultsSpy.calls.length).toEqual(2);
-      expect(filteredResultsSpy.calls[1].arguments[0]).toEqual([
+      expect(filteredResultsSpy.mock.calls.length).toEqual(2);
+      expect(filteredResultsSpy.mock.calls[1][0]).toEqual([
         { name: 'one', searchData: 'hello', state: 'archived' },
         { name: 'three', searchData: 'goodbye', state: 'archived' }
       ]);
 
       component.setState({ search: 'archived hello' });
-      expect(filteredResultsSpy.calls.length).toEqual(3);
-      expect(filteredResultsSpy.calls[2].arguments[0]).toEqual([
+      expect(filteredResultsSpy.mock.calls.length).toEqual(3);
+      expect(filteredResultsSpy.mock.calls[2][0]).toEqual([
         { name: 'one', searchData: 'hello', state: 'archived' }
       ]);
 
       component.setState({ search: 'name:two' });
-      expect(filteredResultsSpy.calls.length).toEqual(4);
-      expect(filteredResultsSpy.calls[3].arguments[0]).toEqual([
+      expect(filteredResultsSpy.mock.calls.length).toEqual(4);
+      expect(filteredResultsSpy.mock.calls[3][0]).toEqual([
         { name: 'two', searchData: 'hello', state: '' }
       ]);
     });
