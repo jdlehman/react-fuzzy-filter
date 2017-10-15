@@ -45,7 +45,7 @@ class MyComponent extends Component {
           {filteredItems => {
             return(
               <div>
-                {filteredItems.forEach(item => <div>{item.name}</div>)}
+                {filteredItems.map(item => <div>{item.name}</div>)}
               </div>
             )
           }}
