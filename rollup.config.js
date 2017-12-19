@@ -23,11 +23,13 @@ export default {
   globals: {
     react: 'React'
   },
-  name: 'ReactFuzzyFilter',
-  moduleId: 'react-fuzzy-filter',
   output: [
-    { format: 'umd', file: 'dist/react-fuzzy-filter.umd.js' },
-    { format: 'iife', file: 'dist/react-fuzzy-filter.browser.js' },
+    {
+      name: 'ReactFuzzyFilter',
+      format: 'umd',
+      file: 'dist/react-fuzzy-filter.umd.js'
+    },
+    { name: 'ReactFuzzyFilter', format: 'iife', file: 'dist/react-fuzzy-filter.browser.js' },
     { format: 'amd', file: 'dist/react-fuzzy-filter.amd.js' },
     { format: 'cjs', file: 'dist/react-fuzzy-filter.cjs.js' },
     { format: 'es', file: 'dist/react-fuzzy-filter.es-modules.js' }
