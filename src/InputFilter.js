@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import debounce from 'debounce';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import debounce from "debounce";
 
 export default function inputFilterFactory(store) {
   function updateValue(value, callback) {
     const overrideValue = callback(value);
-    if (typeof overrideValue === 'string') {
+    if (typeof overrideValue === "string") {
       value = overrideValue;
     }
     store.next(value);
   }
 
   class InputFilter extends Component {
-    static displayName = 'InputFilter';
+    static displayName = "InputFilter";
 
     static propTypes = {
       classPrefix: PropTypes.string.isRequired,
@@ -23,14 +23,14 @@ export default function inputFilterFactory(store) {
     };
 
     static defaultProps = {
-      classPrefix: 'react-fuzzy-filter',
+      classPrefix: "react-fuzzy-filter",
       inputProps: {},
       onChange: function() {},
       debounceTime: 0
     };
 
     state = {
-      value: this.props.initialSearch || ''
+      value: this.props.initialSearch || ""
     };
 
     componentDidMount() {
