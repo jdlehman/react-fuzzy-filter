@@ -1,10 +1,10 @@
-import { Component } from 'react';
-import PropTypes from 'prop-types';
-import Fuse from 'fuse.js';
+import { Component } from "react";
+import PropTypes from "prop-types";
+import Fuse from "fuse.js";
 
 export default function filterResultsFactory(store) {
   class FilterResults extends Component {
-    static displayName = 'FilterResults';
+    static displayName = "FilterResults";
 
     static propTypes = {
       children: PropTypes.func.isRequired,
@@ -59,7 +59,7 @@ export default function filterResultsFactory(store) {
       let items = this.props.items;
       this.props.prefilters.forEach(({ regex, handler }) => {
         const matches = search.match(regex) || [];
-        search = search.replace(regex, '').trim();
+        search = search.replace(regex, "").trim();
         matches.forEach(match => {
           items = handler(match, items, Fuse);
         });
@@ -68,8 +68,8 @@ export default function filterResultsFactory(store) {
     }
 
     filterItems() {
-      const { items, search } = this.prefilterItems(this.state.search || '');
-      if (search.trim() === '') {
+      const { items, search } = this.prefilterItems(this.state.search || "");
+      if (search.trim() === "") {
         return this.props.defaultAllItems ? items : [];
       } else {
         const fuse = new Fuse(items, this.props.fuseConfig);

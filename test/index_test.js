@@ -1,16 +1,16 @@
-import { mount } from 'enzyme';
-import React from 'react';
-import fuzzyFilterFactory from '../src';
+import { mount } from "enzyme";
+import React from "react";
+import fuzzyFilterFactory from "../src";
 
 const items = [
-  { name: 'one', searchData: 'hello' },
-  { name: 'two', searchData: 'hello' },
-  { name: 'three', searchData: 'goodbye' },
-  { name: 'four', searchData: 'bonjour' }
+  { name: "one", searchData: "hello" },
+  { name: "two", searchData: "hello" },
+  { name: "three", searchData: "goodbye" },
+  { name: "four", searchData: "bonjour" }
 ];
 
 const defaultFuseConfig = {
-  keys: ['searchData']
+  keys: ["searchData"]
 };
 
 function componentFactory(inputFilterProps, filterResultsProps, resultsSpy) {
@@ -29,23 +29,23 @@ function componentFactory(inputFilterProps, filterResultsProps, resultsSpy) {
   return MyComponent;
 }
 
-describe('fuzzyFilterFactory', () => {
+describe("fuzzyFilterFactory", () => {
   let resultsSpy;
   beforeEach(() => {
     resultsSpy = jest.fn().mockImplementation(() => <div />);
   });
 
-  it('returns FilterResults and InputFilter components', () => {
+  it("returns FilterResults and InputFilter components", () => {
     const { InputFilter, FilterResults } = fuzzyFilterFactory();
-    expect(typeof InputFilter).toEqual('function');
-    expect(typeof FilterResults).toEqual('function');
-    expect(FilterResults.displayName).toEqual('FilterResults');
-    expect(InputFilter.displayName).toEqual('InputFilter');
+    expect(typeof InputFilter).toEqual("function");
+    expect(typeof FilterResults).toEqual("function");
+    expect(FilterResults.displayName).toEqual("FilterResults");
+    expect(InputFilter.displayName).toEqual("InputFilter");
   });
 
-  it('input controls filter results', () => {
+  it("input controls filter results", () => {
     const MyComponent = componentFactory(
-      { placeholder: 'Search' },
+      { placeholder: "Search" },
       { items: items, fuseConfig: defaultFuseConfig },
       resultsSpy
     );
@@ -53,40 +53,40 @@ describe('fuzzyFilterFactory', () => {
     expect(resultsSpy).toHaveBeenCalledTimes(2);
     expect(resultsSpy.mock.calls.length).toEqual(2);
     expect(resultsSpy).toHaveBeenLastCalledWith([
-      { name: 'one', searchData: 'hello' },
-      { name: 'two', searchData: 'hello' },
-      { name: 'three', searchData: 'goodbye' },
-      { name: 'four', searchData: 'bonjour' }
+      { name: "one", searchData: "hello" },
+      { name: "two", searchData: "hello" },
+      { name: "three", searchData: "goodbye" },
+      { name: "four", searchData: "bonjour" }
     ]);
 
-    component.find('input').simulate('change', {
-      target: { value: 'ello' }
+    component.find("input").simulate("change", {
+      target: { value: "ello" }
     });
     expect(resultsSpy).toHaveBeenCalledTimes(3);
     expect(resultsSpy).toHaveBeenLastCalledWith([
-      { name: 'one', searchData: 'hello' },
-      { name: 'two', searchData: 'hello' }
+      { name: "one", searchData: "hello" },
+      { name: "two", searchData: "hello" }
     ]);
 
-    component.find('input').simulate('change', {
-      target: { value: 'gdbye' }
+    component.find("input").simulate("change", {
+      target: { value: "gdbye" }
     });
     expect(resultsSpy).toHaveBeenCalledTimes(4);
     expect(resultsSpy).toHaveBeenLastCalledWith([
-      { name: 'three', searchData: 'goodbye' }
+      { name: "three", searchData: "goodbye" }
     ]);
   });
 
-  it('uses initialSearch', () => {
+  it("uses initialSearch", () => {
     const MyComponent = componentFactory(
-      { placeholder: 'Search', initialSearch: 'gdbye' },
+      { placeholder: "Search", initialSearch: "gdbye" },
       { items: items, fuseConfig: defaultFuseConfig },
       resultsSpy
     );
     mount(<MyComponent />);
     expect(resultsSpy).toHaveBeenCalledTimes(2);
     expect(resultsSpy).toHaveBeenLastCalledWith([
-      { name: 'three', searchData: 'goodbye' }
+      { name: "three", searchData: "goodbye" }
     ]);
   });
 });
