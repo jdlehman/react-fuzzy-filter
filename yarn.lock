@@ -4387,17 +4387,13 @@ run-async@^2.2.0:
   dependencies:
     is-promise "^2.1.0"
 
-rxjs-compat@^6.2.2:
-  version "6.2.2"
-  resolved "https://registry.yarnpkg.com/rxjs-compat/-/rxjs-compat-6.2.2.tgz#3c0fcdb46130cc70aa55412c2b1147905ab4680a"
-
 rxjs@^5.5.2:
   version "5.5.11"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.11.tgz#f733027ca43e3bec6b994473be4ab98ad43ced87"
   dependencies:
     symbol-observable "1.0.1"
 
-rxjs@^6.1.0, rxjs@^6.2.2:
+rxjs@^6.1.0:
   version "6.2.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.2.2.tgz#eb75fa3c186ff5289907d06483a77884586e1cf9"
   dependencies:
@@ -4959,6 +4955,10 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
+
+valoo@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/valoo/-/valoo-2.1.0.tgz#06d3d8f1245b22b307fc5181c57b5912853c4d46"
 
 verror@1.10.0:
   version "1.10.0"

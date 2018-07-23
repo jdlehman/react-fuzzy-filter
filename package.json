@@ -71,7 +71,6 @@
     "debounce": "^1.0.2",
     "fuse.js": "^3.1.0",
     "prop-types": "^15.6.0",
-    "rxjs": "^6.2.2",
-    "rxjs-compat": "^6.2.2"
+    "valoo": "^2.1.0"
   }
 }

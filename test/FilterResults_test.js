@@ -1,6 +1,6 @@
 import { shallow } from "enzyme";
 import React from "react";
-import { Subject } from "rxjs";
+import valoo from "valoo";
 import filterResultsFactory from "../src/FilterResults";
 
 const filteredResultsSpy = jest.fn().mockImplementation(() => <div />);
@@ -18,7 +18,7 @@ const defaultFuseConfig = {
 
 describe("FilterResults", () => {
   let FilterResults;
-  const store = new Subject();
+  const store = valoo();
   beforeEach(() => {
     FilterResults = filterResultsFactory(store);
     filteredResultsSpy.mockClear();

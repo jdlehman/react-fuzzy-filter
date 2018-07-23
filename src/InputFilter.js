@@ -3,12 +3,18 @@ import PropTypes from "prop-types";
 import debounce from "debounce";
 
 export default function inputFilterFactory(store) {
-  function updateValue(value, callback) {
+  function updateValue(value, callback, async) {
     const overrideValue = callback(value);
     if (typeof overrideValue === "string") {
       value = overrideValue;
     }
-    store.next(value);
+    if (async) {
+      // ensure first update happens async so that ResultsFilter
+      // gets initialSearch, even if it is mounted after InputFilter
+      setTimeout(() => store(value));
+    } else {
+      store(value);
+    }
   }
 
   class InputFilter extends Component {
@@ -34,7 +40,7 @@ export default function inputFilterFactory(store) {
     };
 
     componentDidMount() {
-      updateValue(this.props.initialSearch, this.props.onChange);
+      updateValue(this.props.initialSearch, this.props.onChange, true);
     }
 
     componentWillReceiveProps(nextProps) {
