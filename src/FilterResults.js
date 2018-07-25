@@ -48,11 +48,13 @@ export default function filterResultsFactory(store) {
     };
 
     componentDidMount() {
-      this.subscription = store.subscribe(search => this.setState({ search }));
+      this.unsubscribe = store.on(search => {
+        this.setState({ search });
+      });
     }
 
     componentWillUnmount() {
-      this.subscription.unsubscribe();
+      this.unsubscribe();
     }
 
     prefilterItems(search) {

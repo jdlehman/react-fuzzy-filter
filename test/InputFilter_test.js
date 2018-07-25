@@ -1,13 +1,13 @@
 import { shallow } from "enzyme";
 import React from "react";
-import { Subject } from "rxjs/Subject";
+import valoo from "valoo";
 import inputFilterFactory from "../src/InputFilter";
 
 describe("InputFilter", () => {
   let InputFilter;
   let store;
   beforeEach(() => {
-    store = new Subject();
+    store = valoo();
     InputFilter = inputFilterFactory(store);
   });
 
@@ -54,7 +54,7 @@ describe("InputFilter", () => {
     });
 
     it("passes the value to the store", done => {
-      store.subscribe(data => {
+      store.on(data => {
         expect(data).toEqual("some input");
         done();
       });
@@ -65,7 +65,7 @@ describe("InputFilter", () => {
     });
 
     it("overrides search value with any return value to onChange", done => {
-      store.subscribe(data => {
+      store.on(data => {
         expect(data).toEqual("hello");
         done();
       });

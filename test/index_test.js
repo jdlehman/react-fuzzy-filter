@@ -43,50 +43,55 @@ describe("fuzzyFilterFactory", () => {
     expect(InputFilter.displayName).toEqual("InputFilter");
   });
 
-  it("input controls filter results", () => {
+  it("input controls filter results", done => {
     const MyComponent = componentFactory(
       { placeholder: "Search" },
       { items: items, fuseConfig: defaultFuseConfig },
       resultsSpy
     );
     const component = mount(<MyComponent />);
-    expect(resultsSpy).toHaveBeenCalledTimes(2);
-    expect(resultsSpy.mock.calls.length).toEqual(2);
-    expect(resultsSpy).toHaveBeenLastCalledWith([
-      { name: "one", searchData: "hello" },
-      { name: "two", searchData: "hello" },
-      { name: "three", searchData: "goodbye" },
-      { name: "four", searchData: "bonjour" }
-    ]);
+    setTimeout(() => {
+      expect(resultsSpy).toHaveBeenCalledTimes(2);
+      expect(resultsSpy).toHaveBeenLastCalledWith([
+        { name: "one", searchData: "hello" },
+        { name: "two", searchData: "hello" },
+        { name: "three", searchData: "goodbye" },
+        { name: "four", searchData: "bonjour" }
+      ]);
 
-    component.find("input").simulate("change", {
-      target: { value: "ello" }
-    });
-    expect(resultsSpy).toHaveBeenCalledTimes(3);
-    expect(resultsSpy).toHaveBeenLastCalledWith([
-      { name: "one", searchData: "hello" },
-      { name: "two", searchData: "hello" }
-    ]);
+      component.find("input").simulate("change", {
+        target: { value: "ello" }
+      });
+      expect(resultsSpy).toHaveBeenCalledTimes(3);
+      expect(resultsSpy).toHaveBeenLastCalledWith([
+        { name: "one", searchData: "hello" },
+        { name: "two", searchData: "hello" }
+      ]);
 
-    component.find("input").simulate("change", {
-      target: { value: "gdbye" }
+      component.find("input").simulate("change", {
+        target: { value: "gdbye" }
+      });
+      expect(resultsSpy).toHaveBeenCalledTimes(4);
+      expect(resultsSpy).toHaveBeenLastCalledWith([
+        { name: "three", searchData: "goodbye" }
+      ]);
+      done();
     });
-    expect(resultsSpy).toHaveBeenCalledTimes(4);
-    expect(resultsSpy).toHaveBeenLastCalledWith([
-      { name: "three", searchData: "goodbye" }
-    ]);
   });
 
-  it("uses initialSearch", () => {
+  it("uses initialSearch", done => {
     const MyComponent = componentFactory(
       { placeholder: "Search", initialSearch: "gdbye" },
       { items: items, fuseConfig: defaultFuseConfig },
       resultsSpy
     );
     mount(<MyComponent />);
-    expect(resultsSpy).toHaveBeenCalledTimes(2);
-    expect(resultsSpy).toHaveBeenLastCalledWith([
-      { name: "three", searchData: "goodbye" }
-    ]);
+    setTimeout(() => {
+      expect(resultsSpy).toHaveBeenCalledTimes(2);
+      expect(resultsSpy).toHaveBeenLastCalledWith([
+        { name: "three", searchData: "goodbye" }
+      ]);
+      done();
+    });
   });
 });
