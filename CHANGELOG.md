@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.0 (2018-7-24)
+
+Changed:
+
+- Use [valoo](https://www.npmjs.com/package/valoo) instead of [rxjs](https://github.com/ReactiveX/rxjs) for state management.
+
 ## 3.2.0 (2017-5-30)
 
 Added:
