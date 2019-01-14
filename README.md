@@ -21,41 +21,46 @@ npm install -S react-fuzzy-filter
 The default export of ReactFuzzyFilter is a factory function that returns two components, `InputFilter` and `FilterResults`. `FilterResults` receives the data typed into the `InputFilter` and uses it to fuzzy filter matches in its items. Each item is then rendered via a custom render function. Each invocation of the factory function creates two new "linked" components that can be used anywhere. The components do not need to live in the same component or part of the page.
 
 ```js
-import React, {Component} from 'react';
-import fuzzyFilterFactory from 'react-fuzzy-filter';
+import React, { Component } from "react";
+import fuzzyFilterFactory from "react-fuzzy-filter";
 
 // these components share state and can even live in different components
-const {InputFilter, FilterResults} = fuzzyFilterFactory();
+const { InputFilter, FilterResults, changeInputValue } = fuzzyFilterFactory();
 
 class MyComponent extends Component {
   render() {
     const items = [
-      { name: 'first', meta: 'first|123', tag: 'a' },
-      { name: 'second', meta: 'second|443', tag: 'b' },
-      { name: 'third', meta: 'third|623', tag: 'a' },
+      { name: "first", meta: "first|123", tag: "a" },
+      { name: "second", meta: "second|443", tag: "b" },
+      { name: "third", meta: "third|623", tag: "a" }
     ];
     const fuseConfig = {
-      keys: ['meta', 'tag']
+      keys: ["meta", "tag"]
     };
     return (
       <div>
         <InputFilter debounceTime={200} />
         <div>Any amount of content between</div>
-        <FilterResults
-          items={items}
-          fuseConfig={fuseConfig}>
+        <FilterResults items={items} fuseConfig={fuseConfig}>
           {filteredItems => {
-            return(
-              <div>
-                {filteredItems.map(item => <div>{item.name}</div>)}
-              </div>
-            )
+            return (
+              <div>{filteredItems.map(item => <div>{item.name}</div>)}</div>
+            );
           }}
         </FilterResults>
       </div>
     );
   }
 }
+```
+
+## changeInputValue
+
+A function that will change the value in the input (outside of user updating `InputFilter` text). This is useful to trigger input value changes eg. a button that resets the `InputFilter` state when clicked.
+
+```js
+// eg.
+changeInputValue("new value");
 ```
 
 ## Components
@@ -85,7 +90,6 @@ An input field that controls the state used to render the items in `FilterResult
 ### debounceTime
 
 `debounceTime` is an optional number that denotes the time in milliseconds to debounce the `onChange` event on the input field. It defaults to 0.
-
 
 # FilterResults
 
@@ -118,7 +122,7 @@ const prefilters = [
   {
     regex: /author:\S+/g,
     handler: (match, items, Fuse) => {
-      const name = match.split(':')[1];
+      const name = match.split(":")[1];
       return items.filter(item => item.author === name);
     }
   }
@@ -127,14 +131,13 @@ const prefilters = [
 
 We could also define a prefilter to fuzzy search on a different key then our default Fuse config. Example: `name:Bob` would fuzzy filter for `Bob` on the `name` key.
 
-
 ```js
 const prefilters = [
   {
     regex: /\S+:\S+/g,
     handler: (match, items, Fuse) => {
-      const [key, value] = match.split(':');
-      const fuse = new Fuse(items, {keys: [key]});
+      const [key, value] = match.split(":");
+      const fuse = new Fuse(items, { keys: [key] });
       return fuse.search(value);
     }
   }

@@ -14,7 +14,7 @@ const defaultFuseConfig = {
 };
 
 function componentFactory(inputFilterProps, filterResultsProps, resultsSpy) {
-  const { InputFilter, FilterResults } = fuzzyFilterFactory();
+  const { InputFilter, FilterResults, changeInputValue } = fuzzyFilterFactory();
   function MyComponent() {
     return (
       <div>
@@ -26,7 +26,7 @@ function componentFactory(inputFilterProps, filterResultsProps, resultsSpy) {
     );
   }
 
-  return MyComponent;
+  return { MyComponent, changeInputValue };
 }
 
 describe("fuzzyFilterFactory", () => {
@@ -44,7 +44,7 @@ describe("fuzzyFilterFactory", () => {
   });
 
   it("input controls filter results", done => {
-    const MyComponent = componentFactory(
+    const { MyComponent } = componentFactory(
       { placeholder: "Search" },
       { items: items, fuseConfig: defaultFuseConfig },
       resultsSpy
@@ -80,7 +80,7 @@ describe("fuzzyFilterFactory", () => {
   });
 
   it("uses initialSearch", done => {
-    const MyComponent = componentFactory(
+    const { MyComponent } = componentFactory(
       { placeholder: "Search", initialSearch: "gdbye" },
       { items: items, fuseConfig: defaultFuseConfig },
       resultsSpy
@@ -90,6 +90,24 @@ describe("fuzzyFilterFactory", () => {
       expect(resultsSpy).toHaveBeenCalledTimes(2);
       expect(resultsSpy).toHaveBeenLastCalledWith([
         { name: "three", searchData: "goodbye" }
+      ]);
+      done();
+    });
+  });
+
+  it("handles external input value changes via changeInputValue function", done => {
+    const { MyComponent, changeInputValue } = componentFactory(
+      { placeholder: "Search", initialSearch: "gdbye" },
+      { items: items, fuseConfig: defaultFuseConfig },
+      resultsSpy
+    );
+    mount(<MyComponent />);
+    // change value externally
+    setTimeout(() => changeInputValue("bonjour"));
+    setTimeout(() => {
+      expect(resultsSpy).toHaveBeenCalledTimes(3);
+      expect(resultsSpy).toHaveBeenLastCalledWith([
+        { name: "four", searchData: "bonjour" }
       ]);
       done();
     });
