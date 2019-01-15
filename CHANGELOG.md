@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.1.0 (2019-1-15)
+
+Added:
+
+- `changeInputValue` function is now a named export from the library. This will trigger changing the `InputFilter` input value as well as affect the rendered `FilterResults`. eg. `changeInputValue("new input")`
+
 ## 4.0.0 (2018-7-24)
 
 Changed:
