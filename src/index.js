@@ -6,6 +6,7 @@ export default function fuzzyFilterFactory() {
   const store = valoo();
   return {
     InputFilter: inputFilterFactory(store),
-    FilterResults: filterResultsFactory(store)
+    FilterResults: filterResultsFactory(store),
+    changeInputValue: value => store(typeof value !== "string" ? "" : value)
   };
 }

@@ -41,13 +41,19 @@ export default function inputFilterFactory(store) {
 
     componentDidMount() {
       updateValue(this.props.initialSearch, this.props.onChange, true);
+      this.unsubscribe = store.on(value => {
+        this.setState({ value });
+      });
+    }
+
+    componentWillUnmount() {
+      this.unsubscribe();
     }
 
     componentWillReceiveProps(nextProps) {
       this.updateValue = debounce(updateValue, nextProps.debounceTime);
       if (nextProps.initialSearch !== this.props.initialSearch) {
         updateValue(nextProps.initialSearch, this.props.onChange);
-        this.setState({ value: nextProps.initialSearch });
       }
     }
 
@@ -67,7 +73,7 @@ export default function inputFilterFactory(store) {
         <input
           className={`${this.props.classPrefix}__input`}
           onChange={this.handleChange}
-          value={this.state.value}
+          value={this.state.value || ""}
           {...this.props.inputProps}
         />
       );
