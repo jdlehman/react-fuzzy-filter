@@ -1,14 +1,16 @@
 {
   "name": "react-fuzzy-filter",
-  "version": "4.0.0",
+  "version": "4.1.0-alpha.1",
   "description": "Render a subset of a collection with fuzzy searching",
   "main": "dist/react-fuzzy-filter.umd.min.js",
   "module": "dist/react-fuzzy-filter.es-modules.js",
   "scripts": {
     "build": "yarn run clean && $(yarn bin)/rollup -c && yarn run minify",
     "minify": "yarn run minify-browser && yarn run minify-umd",
-    "minify-browser": "$(yarn bin)/uglifyjs dist/react-fuzzy-filter.browser.js -cm > dist/react-fuzzy-filter.browser.min.js",
-    "minify-umd": "$(yarn bin)/uglifyjs dist/react-fuzzy-filter.umd.js -cm > dist/react-fuzzy-filter.umd.min.js",
+    "minify-browser":
+      "$(yarn bin)/uglifyjs dist/react-fuzzy-filter.browser.js -cm > dist/react-fuzzy-filter.browser.min.js",
+    "minify-umd":
+      "$(yarn bin)/uglifyjs dist/react-fuzzy-filter.umd.js -cm > dist/react-fuzzy-filter.umd.min.js",
     "lint:src": "$(yarn bin)/eslint ./src",
     "lint:test": "$(yarn bin)/eslint ./test",
     "lint": "yarn run lint:src && yarn run lint:test",
@@ -24,16 +26,8 @@
   "bugs": {
     "url": "https://github.com/jdlehman/react-fuzzy-filter/issues"
   },
-  "keywords": [
-    "react",
-    "react-component",
-    "filter",
-    "fuzzy",
-    "javascript"
-  ],
-  "files": [
-    "dist"
-  ],
+  "keywords": ["react", "react-component", "filter", "fuzzy", "javascript"],
+  "files": ["dist"],
   "author": "Jonathan Lehman <jonathan.lehman91@gmail.com>",
   "license": "MIT",
   "devDependencies": {
