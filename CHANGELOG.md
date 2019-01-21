@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.0 (2019-1-21)
+
+Improved:
+
+- Wrapped `valoo` store to store current value so that subscribers can replay the latest event (and have the current state) regardless of component render order. This will also help with async react.
+
 ## 4.1.0 (2019-1-15)
 
 Added:
