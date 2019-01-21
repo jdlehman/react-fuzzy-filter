@@ -4,8 +4,6 @@
 
 # react-fuzzy-filter
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/jdlehman/react-fuzzy-filter.svg)](https://greenkeeper.io/)
-
 Fuzzy filter a list of data based on the search value typed in the input field. The list of matching items is made available as an argument to the FilterResults component's child function.
 
 ReactFuzzyFilter is powered by [`fuse.js`](https://github.com/krisk/Fuse).
