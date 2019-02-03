@@ -1,16 +1,16 @@
 import { mount } from "enzyme";
 import React from "react";
-import fuzzyFilterFactory from "../src";
+import fuzzyFilterFactory from "../dist/react-fuzzy-filter.umd.development";
 
 const items = [
   { name: "one", searchData: "hello" },
   { name: "two", searchData: "hello" },
   { name: "three", searchData: "goodbye" },
-  { name: "four", searchData: "bonjour" }
+  { name: "four", searchData: "bonjour" },
 ];
 
 const defaultFuseConfig = {
-  keys: ["searchData"]
+  keys: ["searchData"],
 };
 
 function componentFactory(inputFilterProps, filterResultsProps, resultsSpy) {
@@ -56,24 +56,24 @@ describe("fuzzyFilterFactory", () => {
         { name: "one", searchData: "hello" },
         { name: "two", searchData: "hello" },
         { name: "three", searchData: "goodbye" },
-        { name: "four", searchData: "bonjour" }
+        { name: "four", searchData: "bonjour" },
       ]);
 
       component.find("input").simulate("change", {
-        target: { value: "ello" }
+        target: { value: "ello" },
       });
       expect(resultsSpy).toHaveBeenCalledTimes(3);
       expect(resultsSpy).toHaveBeenLastCalledWith([
         { name: "one", searchData: "hello" },
-        { name: "two", searchData: "hello" }
+        { name: "two", searchData: "hello" },
       ]);
 
       component.find("input").simulate("change", {
-        target: { value: "gdbye" }
+        target: { value: "gdbye" },
       });
       expect(resultsSpy).toHaveBeenCalledTimes(4);
       expect(resultsSpy).toHaveBeenLastCalledWith([
-        { name: "three", searchData: "goodbye" }
+        { name: "three", searchData: "goodbye" },
       ]);
       done();
     });
@@ -89,7 +89,7 @@ describe("fuzzyFilterFactory", () => {
     setTimeout(() => {
       expect(resultsSpy).toHaveBeenCalledTimes(2);
       expect(resultsSpy).toHaveBeenLastCalledWith([
-        { name: "three", searchData: "goodbye" }
+        { name: "three", searchData: "goodbye" },
       ]);
       done();
     });
@@ -107,7 +107,7 @@ describe("fuzzyFilterFactory", () => {
     setTimeout(() => {
       expect(resultsSpy).toHaveBeenCalledTimes(3);
       expect(resultsSpy).toHaveBeenLastCalledWith([
-        { name: "four", searchData: "bonjour" }
+        { name: "four", searchData: "bonjour" },
       ]);
       done();
     });

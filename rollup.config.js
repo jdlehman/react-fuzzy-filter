@@ -1,62 +1,119 @@
-import babel from "rollup-plugin-babel";
-import replace from "rollup-plugin-replace";
+// adapted from formik: https://github.com/jaredpalmer/formik/blob/master/rollup.config.js
 import commonjs from "rollup-plugin-commonjs";
-import nodeResolve from "rollup-plugin-node-resolve";
+import replace from "rollup-plugin-replace";
+import resolve from "rollup-plugin-node-resolve";
+import sourceMaps from "rollup-plugin-sourcemaps";
+import babel from "rollup-plugin-babel";
+import { terser } from "rollup-plugin-terser";
+import { sizeSnapshot } from "rollup-plugin-size-snapshot";
+import pkg from "./package.json";
 
-export default {
-  input: "src/index.js",
-  external: ["react"],
-  plugins: [
-    nodeResolve(),
-    commonjs({
-      include: ["node_modules/**"]
-    }),
-    babel({
-      babelrc: false,
-      presets: ["es2015-rollup", "stage-0", "react"]
-    }),
-    replace({
-      "process.env.NODE_DEBUG": false,
-      "process.env.NODE_ENV": '"production"'
-    })
-  ],
-  output: [
-    {
-      name: "ReactFuzzyFilter",
-      format: "umd",
-      file: "dist/react-fuzzy-filter.umd.js",
-      globals: {
-        react: "React"
-      }
-    },
-    {
-      name: "ReactFuzzyFilter",
-      format: "iife",
-      file: "dist/react-fuzzy-filter.browser.js",
-      globals: {
-        react: "React"
-      }
-    },
-    {
-      format: "amd",
-      file: "dist/react-fuzzy-filter.amd.js",
-      globals: {
-        react: "React"
-      }
-    },
-    {
-      format: "cjs",
-      file: "dist/react-fuzzy-filter.cjs.js",
-      globals: {
-        react: "React"
-      }
-    },
-    {
-      format: "es",
-      file: "dist/react-fuzzy-filter.es-modules.js",
-      globals: {
-        react: "React"
-      }
-    }
-  ]
+const input = "./compiled/index.js";
+const external = id => !id.startsWith(".") && !id.startsWith("/");
+const babelOptions = {
+  exclude: /node_modules/,
+  plugins: ["annotate-pure-calls", "dev-expression"]
 };
+
+const buildUmd = ({ env }) => ({
+  input,
+  external: ["react", "react-native"],
+  output: {
+    name: "ReactFuzzyFilter",
+    format: "umd",
+    sourcemap: true,
+    file: `./dist/react-fuzzy-filter.umd.${env}.js`,
+    exports: "named",
+    globals: {
+      react: "React",
+      "react-native": "ReactNative"
+    }
+  },
+
+  plugins: [
+    resolve(),
+    babel(babelOptions),
+    replace({
+      "process.env.NODE_ENV": JSON.stringify(env)
+    }),
+    commonjs({
+      include: /node_modules/,
+      namedExports: {
+        "node_modules/prop-types/index.js": [
+          "object",
+          "oneOfType",
+          "string",
+          "node",
+          "func",
+          "bool",
+          "element"
+        ]
+      }
+    }),
+    sourceMaps(),
+    sizeSnapshot(),
+    env === "production" &&
+      terser({
+        sourcemap: true,
+        output: { comments: false },
+        compress: {
+          keep_infinity: true,
+          pure_getters: true
+        },
+        warnings: true,
+        ecma: 5,
+        toplevel: false
+      })
+  ]
+});
+
+const buildCjs = ({ env }) => ({
+  input,
+  external,
+  output: {
+    file: `./dist/${pkg.name}.cjs.${env}.js`,
+    format: "cjs",
+    sourcemap: true
+  },
+  plugins: [
+    resolve(),
+    replace({
+      "process.env.NODE_ENV": JSON.stringify(env)
+    }),
+    sourceMaps(),
+    sizeSnapshot(),
+    env === "production" &&
+      terser({
+        sourcemap: true,
+        output: { comments: false },
+        compress: {
+          keep_infinity: true,
+          pure_getters: true
+        },
+        warnings: true,
+        ecma: 5,
+        // Compress and/or mangle variables in top level scope.
+        // @see https://github.com/terser-js/terser
+        toplevel: true
+      })
+  ]
+});
+
+export default [
+  buildUmd({ env: "production" }),
+  buildUmd({ env: "development" }),
+  buildCjs({ env: "production" }),
+  buildCjs({ env: "development" }),
+  {
+    input,
+    external,
+    output: [
+      {
+        file: pkg.module,
+        format: "esm",
+        sourcemap: true
+      }
+    ],
+    plugins: [resolve(), babel(babelOptions), sizeSnapshot(), sourceMaps()]
+  }
+];

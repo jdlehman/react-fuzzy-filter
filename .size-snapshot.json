@@ -1,0 +1,36 @@
+{
+  "./dist/react-fuzzy-filter.umd.production.js": {
+    "bundled": 42929,
+    "minified": 14163,
+    "gzipped": 4943
+  },
+  "./dist/react-fuzzy-filter.umd.development.js": {
+    "bundled": 42929,
+    "minified": 14163,
+    "gzipped": 4943
+  },
+  "./dist/react-fuzzy-filter.cjs.production.js": {
+    "bundled": 5452,
+    "minified": 2896,
+    "gzipped": 1024
+  },
+  "./dist/react-fuzzy-filter.cjs.development.js": {
+    "bundled": 5452,
+    "minified": 2896,
+    "gzipped": 1024
+  },
+  "dist/react-fuzzy-filter.esm.js": {
+    "bundled": 4706,
+    "minified": 2693,
+    "gzipped": 963,
+    "treeshaked": {
+      "rollup": {
+        "code": 75,
+        "import_statements": 75
+      },
+      "webpack": {
+        "code": 1191
+      }
+    }
+  }
+}
