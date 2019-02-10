@@ -8,11 +8,11 @@ import { terser } from "rollup-plugin-terser";
 import { sizeSnapshot } from "rollup-plugin-size-snapshot";
 import pkg from "./package.json";
 
-const input = "./compiled/index.js";
+const input = "./compiled/src/index.js";
 const external = id => !id.startsWith(".") && !id.startsWith("/");
 const babelOptions = {
   exclude: /node_modules/,
-  plugins: ["annotate-pure-calls", "dev-expression"]
+  plugins: ["annotate-pure-calls", "dev-expression"],
 };
 
 const buildUmd = ({ env }) => ({
@@ -26,15 +26,15 @@ const buildUmd = ({ env }) => ({
     exports: "named",
     globals: {
       react: "React",
-      "react-native": "ReactNative"
-    }
+      "react-native": "ReactNative",
+    },
   },
 
   plugins: [
     resolve(),
     babel(babelOptions),
     replace({
-      "process.env.NODE_ENV": JSON.stringify(env)
+      "process.env.NODE_ENV": JSON.stringify(env),
     }),
     commonjs({
       include: /node_modules/,
@@ -46,9 +46,9 @@ const buildUmd = ({ env }) => ({
           "node",
           "func",
           "bool",
-          "element"
-        ]
-      }
+          "element",
+        ],
+      },
     }),
     sourceMaps(),
     sizeSnapshot(),
@@ -58,13 +58,13 @@ const buildUmd = ({ env }) => ({
         output: { comments: false },
         compress: {
           keep_infinity: true,
-          pure_getters: true
+          pure_getters: true,
         },
         warnings: true,
         ecma: 5,
-        toplevel: false
-      })
-  ]
+        toplevel: false,
+      }),
+  ],
 });
 
 const buildCjs = ({ env }) => ({
@@ -73,12 +73,12 @@ const buildCjs = ({ env }) => ({
   output: {
     file: `./dist/${pkg.name}.cjs.${env}.js`,
     format: "cjs",
-    sourcemap: true
+    sourcemap: true,
   },
   plugins: [
     resolve(),
     replace({
-      "process.env.NODE_ENV": JSON.stringify(env)
+      "process.env.NODE_ENV": JSON.stringify(env),
     }),
     sourceMaps(),
     sizeSnapshot(),
@@ -88,15 +88,15 @@ const buildCjs = ({ env }) => ({
         output: { comments: false },
         compress: {
           keep_infinity: true,
-          pure_getters: true
+          pure_getters: true,
         },
         warnings: true,
         ecma: 5,
         // Compress and/or mangle variables in top level scope.
         // @see https://github.com/terser-js/terser
-        toplevel: true
-      })
-  ]
+        toplevel: true,
+      }),
+  ],
 });
 
 export default [
@@ -111,9 +111,9 @@ export default [
       {
         file: pkg.module,
         format: "esm",
-        sourcemap: true
-      }
+        sourcemap: true,
+      },
     ],
-    plugins: [resolve(), babel(babelOptions), sizeSnapshot(), sourceMaps()]
-  }
+    plugins: [resolve(), babel(babelOptions), sizeSnapshot(), sourceMaps()],
+  },
 ];

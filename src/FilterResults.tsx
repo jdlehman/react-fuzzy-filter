@@ -5,7 +5,7 @@ import { Disposer, Emitter } from "./behaviorStore";
 export type PreFilterHandler<T> = (
   match: string,
   items: Array<Item<T>>,
-  fuse: Fuse
+  fuse: typeof Fuse
 ) => Array<Item<T>>;
 
 export interface PreFilter<T> {
@@ -17,9 +17,9 @@ export type Item<T> = T;
 export interface FilterResultsProps<T> {
   children: (items: Array<Item<T>>) => JSX.Element;
   items: Array<Item<T>>;
-  defaultAllItems: boolean;
+  defaultAllItems?: boolean;
   fuseConfig: FuseOptions;
-  prefilters: Array<PreFilter<T>>;
+  prefilters?: Array<PreFilter<T>>;
 }
 
 interface FilterResultsState {
@@ -58,11 +58,11 @@ export default function filterResultsFactory<T>(
 
     prefilterItems(search: string): { items: Array<Item<U>>; search: string } {
       let items = this.props.items;
-      this.props.prefilters.forEach(({ regex, handler }) => {
+      (this.props.prefilters || []).forEach(({ regex, handler }) => {
         const matches = search.match(regex) || [];
         search = search.replace(regex, "").trim();
         matches.forEach(match => {
-          items = handler(match, items, Fuse.prototype);
+          items = handler(match, items, Fuse);
         });
       });
       return { items, search };

@@ -3,11 +3,11 @@ import React, { Component } from "react";
 import { Disposer, Emitter } from "./behaviorStore";
 
 export interface InputFilterProps {
-  classPrefix: string;
+  classPrefix?: string;
   initialSearch?: string;
-  inputProps: React.InputHTMLAttributes<HTMLInputElement>;
-  onChange: (value: string) => string;
-  debounceTime: number;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  onChange?: (value: string) => string;
+  debounceTime?: number;
 }
 
 interface InputFilterState {
@@ -42,7 +42,10 @@ export default function inputFilterFactory(
     unsubscribe: Disposer = () => {};
 
     componentDidMount() {
-      updateValue(this.props.initialSearch || "", this.props.onChange);
+      updateValue(
+        this.props.initialSearch || "",
+        this.props.onChange || Input.defaultProps.onChange
+      );
       this.unsubscribe = store.on(value => {
         this.setState({ value });
       });
@@ -55,28 +58,35 @@ export default function inputFilterFactory(
     componentWillReceiveProps(nextProps: InputFilterProps) {
       this.updateValue = debounce(updateValue, nextProps.debounceTime);
       if (nextProps.initialSearch !== this.props.initialSearch) {
-        updateValue(nextProps.initialSearch || "", this.props.onChange);
+        updateValue(
+          nextProps.initialSearch || "",
+          this.props.onChange || Input.defaultProps.onChange
+        );
       }
     }
 
     handleChange = ({
       target: { value },
     }: React.ChangeEvent<HTMLInputElement>) => {
-      this.setState({ value });
-      if (this.props.debounceTime > 0) {
-        this.updateValue(value, this.props.onChange);
+      const debounceTime =
+        this.props.debounceTime || Input.defaultProps.debounceTime;
+      const onChange = this.props.onChange || Input.defaultProps.onChange;
+      if (debounceTime > 0) {
+        this.updateValue(value, onChange);
       } else {
-        updateValue(value, this.props.onChange);
+        updateValue(value, onChange);
       }
     };
 
     render() {
+      const prefix = this.props.classPrefix || Input.defaultProps.classPrefix;
+      const inputProps = this.props.inputProps || Input.defaultProps.inputProps;
       return (
         <input
-          className={`${this.props.classPrefix}__input`}
+          className={`${prefix}__input`}
           onChange={this.handleChange}
           value={this.state.value || ""}
-          {...this.props.inputProps}
+          {...inputProps}
         />
       );
     }

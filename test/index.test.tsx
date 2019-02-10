@@ -1,27 +1,43 @@
 import { mount } from "enzyme";
+import { FuseOptions } from "fuse.js";
 import React from "react";
-import fuzzyFilterFactory from "../dist/react-fuzzy-filter.umd.development";
+import fuzzyFilterFactory, {
+  FilterResultsProps,
+  InputFilterProps,
+} from "../src";
 
-const items = [
+interface TestItem {
+  name: string;
+  searchData: string;
+}
+const items: TestItem[] = [
   { name: "one", searchData: "hello" },
   { name: "two", searchData: "hello" },
   { name: "three", searchData: "goodbye" },
   { name: "four", searchData: "bonjour" },
 ];
 
-const defaultFuseConfig = {
+const defaultFuseConfig: FuseOptions = {
   keys: ["searchData"],
 };
 
-function componentFactory(inputFilterProps, filterResultsProps, resultsSpy) {
-  const { InputFilter, FilterResults, changeInputValue } = fuzzyFilterFactory();
+function componentFactory(
+  inputFilterProps: InputFilterProps,
+  filterResultsProps: FilterResultsProps<TestItem>
+) {
+  const { InputFilter, FilterResults, changeInputValue } = fuzzyFilterFactory<
+    TestItem
+  >();
   function MyComponent() {
     return (
       <div>
         <h2>Separate Components</h2>
-        <InputFilter {...inputFilterProps} />
+        <InputFilter
+          inputProps={{ placeholder: "Search" }}
+          {...inputFilterProps}
+        />
         <h4>Any amount of content between</h4>
-        <FilterResults {...filterResultsProps}>{resultsSpy}</FilterResults>
+        <FilterResults {...filterResultsProps} />
       </div>
     );
   }
@@ -30,13 +46,13 @@ function componentFactory(inputFilterProps, filterResultsProps, resultsSpy) {
 }
 
 describe("fuzzyFilterFactory", () => {
-  let resultsSpy;
+  let resultsSpy: any;
   beforeEach(() => {
     resultsSpy = jest.fn().mockImplementation(() => <div />);
   });
 
   it("returns FilterResults and InputFilter components", () => {
-    const { InputFilter, FilterResults } = fuzzyFilterFactory();
+    const { InputFilter, FilterResults } = fuzzyFilterFactory<TestItem>();
     expect(typeof InputFilter).toEqual("function");
     expect(typeof FilterResults).toEqual("function");
     expect(FilterResults.displayName).toEqual("FilterResults");
@@ -45,9 +61,8 @@ describe("fuzzyFilterFactory", () => {
 
   it("input controls filter results", done => {
     const { MyComponent } = componentFactory(
-      { placeholder: "Search" },
-      { items: items, fuseConfig: defaultFuseConfig },
-      resultsSpy
+      {},
+      { items, fuseConfig: defaultFuseConfig, children: resultsSpy }
     );
     const component = mount(<MyComponent />);
     setTimeout(() => {
@@ -81,9 +96,8 @@ describe("fuzzyFilterFactory", () => {
 
   it("uses initialSearch", done => {
     const { MyComponent } = componentFactory(
-      { placeholder: "Search", initialSearch: "gdbye" },
-      { items: items, fuseConfig: defaultFuseConfig },
-      resultsSpy
+      { initialSearch: "gdbye" },
+      { items, fuseConfig: defaultFuseConfig, children: resultsSpy }
     );
     mount(<MyComponent />);
     setTimeout(() => {
@@ -97,9 +111,8 @@ describe("fuzzyFilterFactory", () => {
 
   it("handles external input value changes via changeInputValue function", done => {
     const { MyComponent, changeInputValue } = componentFactory(
-      { placeholder: "Search", initialSearch: "gdbye" },
-      { items: items, fuseConfig: defaultFuseConfig },
-      resultsSpy
+      { initialSearch: "gdbye" },
+      { items, fuseConfig: defaultFuseConfig, children: resultsSpy }
     );
     mount(<MyComponent />);
     // change value externally

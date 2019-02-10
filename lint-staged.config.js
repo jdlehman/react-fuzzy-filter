@@ -1,3 +1,3 @@
 module.exports = {
-  "**/*.{ts,tsx}": ["prettier --trailing-comma es5 --write", "git add"],
+  "**/*.{ts,tsx}": ["prettier --write", "git add"],
 };

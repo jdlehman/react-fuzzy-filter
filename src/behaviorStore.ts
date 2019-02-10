@@ -9,18 +9,18 @@ export type Disposer = valoo.Disposer;
 
 // emulates BehaviorSubject from rxjs
 // (stores current state) and replays it on subscribe
-export default function behaviorStore(): Emitter<string> {
-  const store: valoo.Observable<string> = valoo("");
-  let currentState: string;
+export default function behaviorStore<T>(initialValue: T): Emitter<T> {
+  const store: valoo.Observable<T> = valoo(initialValue);
+  let currentState = initialValue;
   // save currentState before emitting
-  const emit = function(value: string) {
+  const emit = function(value: T) {
     currentState = value;
     store(value);
-  } as Emitter<string>;
+  } as Emitter<T>;
 
   // emit currentState on subscribe
   // then use default valoo behavior
-  emit.on = function(fn: (value: string) => void): valoo.Disposer {
+  emit.on = function(fn: (value: T) => void): valoo.Disposer {
     fn(currentState);
     return store.on(fn);
   };

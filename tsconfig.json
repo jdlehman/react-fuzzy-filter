@@ -30,6 +30,6 @@
       "react-fuzzy-filter": ["src/"]
     }
   },
-  "include": ["src", "types"],
+  "include": ["src", "test"],
   "exclude": ["node_modules", "dist"]
 }

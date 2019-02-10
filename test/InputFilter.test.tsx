@@ -1,37 +1,36 @@
 import { shallow } from "enzyme";
 import React from "react";
-import valoo from "valoo";
-import inputFilterFactory from "../src/InputFilter";
+import behaviorStore from "../src/behaviorStore";
+import inputFilterFactory, { InputFilter } from "../src/InputFilter";
 
 describe("InputFilter", () => {
-  let InputFilter;
-  let store;
+  let Input: InputFilter;
+  const store = behaviorStore("");
   beforeEach(() => {
-    store = valoo();
-    InputFilter = inputFilterFactory(store);
+    Input = inputFilterFactory(store);
   });
 
   describe("#render", () => {
     it("renders with defaults", () => {
-      const component = shallow(<InputFilter />);
+      const component = shallow(<Input />);
       expect(component.find(".react-fuzzy-filter__input").length).toEqual(1);
     });
 
     it("sets classPrefix", () => {
-      const component = shallow(<InputFilter classPrefix="my-prefix" />);
+      const component = shallow(<Input classPrefix="my-prefix" />);
       expect(component.find(".my-prefix__input").length).toEqual(1);
     });
 
     it("sets inputProps", () => {
       const inputProps = { placeholder: "Search" };
-      const component = shallow(<InputFilter inputProps={inputProps} />);
+      const component = shallow(<Input inputProps={inputProps} />);
       expect(component.find(".react-fuzzy-filter__input").html()).toEqual(
         '<input class="react-fuzzy-filter__input" value="" placeholder="Search"/>'
       );
     });
 
     it("sets initialSearch", () => {
-      const component = shallow(<InputFilter initialSearch="first search" />);
+      const component = shallow(<Input initialSearch="first search" />);
       expect(component.find("input").html()).toEqual(
         '<input class="react-fuzzy-filter__input" value="first search"/>'
       );
@@ -39,39 +38,36 @@ describe("InputFilter", () => {
   });
 
   describe("#onChange", () => {
-    let component;
-    let spy;
+    let component: any;
+    const spy = jest.fn();
+    const change = (value: string) => {
+      spy(value);
+      return value;
+    };
     beforeEach(() => {
-      spy = jest.fn();
-      component = shallow(<InputFilter onChange={spy} />);
+      component = shallow(<Input onChange={change} />);
     });
 
-    it("calls callback if defined", () => {
+    it("calls callback with search value", () => {
       component.find("input").simulate("change", {
-        target: { value: "my string" }
+        target: { value: "my string" },
       });
       expect(spy).toHaveBeenCalledWith("my string");
     });
 
     it("passes the value to the store", done => {
+      const received = ["", "some input"];
+      let ptr = 0;
       store.on(data => {
-        expect(data).toEqual("some input");
-        done();
+        expect(data).toEqual(received[ptr]);
+        ptr++;
+        if (ptr === 2) {
+          done();
+        }
       });
 
       component.find("input").simulate("change", {
-        target: { value: "some input" }
-      });
-    });
-
-    it("overrides search value with any return value to onChange", done => {
-      store.on(data => {
-        expect(data).toEqual("hello");
-        done();
-      });
-      component = shallow(<InputFilter onChange={() => "hello"} />);
-      component.find("input").simulate("change", {
-        target: { value: "some input" }
+        target: { value: "some input" },
       });
     });
   });
