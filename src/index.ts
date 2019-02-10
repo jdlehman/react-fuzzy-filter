@@ -2,7 +2,13 @@ import behaviorStore, { Emitter } from "./behaviorStore";
 import filterResultsFactory from "./FilterResults";
 import inputFilterFactory from "./InputFilter";
 
-export { FilterResults, FilterResultsProps } from "./FilterResults";
+export {
+  FilterResults,
+  FilterResultsProps,
+  PreFilter,
+  PreFilterHandler,
+  Item,
+} from "./FilterResults";
 export { InputFilter, InputFilterProps } from "./InputFilter";
 
 export default function fuzzyFilterFactory<T>() {

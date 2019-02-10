@@ -15,7 +15,7 @@ export interface PreFilter<T> {
 export type Item<T> = T;
 
 export interface FilterResultsProps<T> {
-  children: (items: Array<Item<T>>) => JSX.Element;
+  children: (items: Array<Item<T>>) => React.ReactNode;
   items: Array<Item<T>>;
   defaultAllItems?: boolean;
   fuseConfig: FuseOptions;
