@@ -30,7 +30,6 @@ export default function inputFilterFactory(
       classPrefix: "react-fuzzy-filter",
       debounceTime: 0,
       inputProps: {},
-      // tslint:disable-next-line:no-empty
       onChange: (value: string) => value,
     };
     state = {
