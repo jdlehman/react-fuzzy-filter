@@ -17,7 +17,7 @@ function behaviorStore() {
   // then use default valoo behavior
   emit.on = function(cb) {
     cb(currentState);
-    store.on(cb);
+    return store.on(cb);
   };
   return emit;
 }
