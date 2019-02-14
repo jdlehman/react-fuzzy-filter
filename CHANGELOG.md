@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.1 (2019-2-14)
+
+Fixed:
+
+- An internal bug was preventing subscriptions from unsubscribing due to `behaviorStore` not returning the unsubscribe function. This bug was introduced in `4.2.0`. Thanks @quietshu for the fix!
+
 ## 4.2.0 (2019-1-21)
 
 Improved:
