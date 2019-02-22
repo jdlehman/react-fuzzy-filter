@@ -46,7 +46,9 @@ export default function inputFilterFactory(
         this.props.onChange || Input.defaultProps.onChange
       );
       this.unsubscribe = store.on(value => {
-        this.setState({ value });
+        if (value !== this.state.value) {
+          this.setState({ value });
+        }
       });
     }
 
@@ -71,7 +73,7 @@ export default function inputFilterFactory(
         this.props.debounceTime || Input.defaultProps.debounceTime;
       const onChange = this.props.onChange || Input.defaultProps.onChange;
       if (debounceTime > 0) {
-        this.updateValue(value, onChange);
+        this.setState({ value }, () => this.updateValue(value, onChange));
       } else {
         updateValue(value, onChange);
       }
