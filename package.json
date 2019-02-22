@@ -79,6 +79,7 @@
     "valoo": "^2.1.0"
   },
   "resolutions": {
+    "merge": "1.2.1",
     "terser": "3.14.1"
   }
 }
