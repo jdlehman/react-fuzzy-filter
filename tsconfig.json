@@ -1,35 +1,12 @@
 {
+  "extends": "./tsconfig.base.json",
+  "include": ["src", "test"],
+  "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "declarationDir": "dist",
-    "emitDecoratorMetadata": false,
-    "experimentalDecorators": false,
-    "esModuleInterop": true,
-    "importHelpers": true,
     "jsx": "react",
-    "lib": ["es2015", "dom"],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "outDir": "compiled",
-    "pretty": true,
-    "removeComments": true,
-    "sourceMap": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "stripInternal": true,
-    "target": "es5",
     "baseUrl": "./",
     "paths": {
       "react-fuzzy-filter": ["src/"]
     }
-  },
-  "include": ["src", "test"],
-  "exclude": ["node_modules", "dist"]
+  }
 }

@@ -8,7 +8,7 @@ import { terser } from "rollup-plugin-terser";
 import { sizeSnapshot } from "rollup-plugin-size-snapshot";
 import pkg from "./package.json";
 
-const input = "./compiled/src/index.js";
+const input = "./compiled/index.js";
 const external = id => !id.startsWith(".") && !id.startsWith("/");
 const babelOptions = {
   exclude: /node_modules/,

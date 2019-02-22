@@ -1,12 +1,12 @@
 {
   "name": "react-fuzzy-filter",
-  "version": "4.3.0-alpha",
+  "version": "4.3.0-alpha.2",
   "description": "Render a subset of a collection with fuzzy searching",
   "main": "dist/index.js",
   "module": "dist/react-fuzzy-filter.esm.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "cross-env NODE_ENV=production tsc && rollup -c && rimraf compiled && cp-cli ./index.js ./dist/index.js",
+    "build": "cross-env NODE_ENV=production tsc -p tsconfig.base.json && rollup -c && rimraf compiled && cp-cli ./index.js ./dist/index.js",
     "lint:src": "$(yarn bin)/tslint ./src/**/*.tsx?",
     "lint:test": "$(yarn bin)/tslint ./test/**/*.tsx?",
     "lint": "yarn run lint:src && yarn run lint:test",
