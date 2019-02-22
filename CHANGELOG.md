@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.0 (2019-2-22)
+
+Added:
+
+Add typescript definitions and rewrite library with typescript.
+
 ## 4.2.1 (2019-2-14)
 
 Fixed:
