@@ -30,10 +30,10 @@ class MyComponent extends Component {
     const items = [
       { name: "first", meta: "first|123", tag: "a" },
       { name: "second", meta: "second|443", tag: "b" },
-      { name: "third", meta: "third|623", tag: "a" }
+      { name: "third", meta: "third|623", tag: "a" },
     ];
     const fuseConfig = {
-      keys: ["meta", "tag"]
+      keys: ["meta", "tag"],
     };
     return (
       <div>
@@ -42,7 +42,11 @@ class MyComponent extends Component {
         <FilterResults items={items} fuseConfig={fuseConfig}>
           {filteredItems => {
             return (
-              <div>{filteredItems.map(item => <div>{item.name}</div>)}</div>
+              <div>
+                {filteredItems.map(item => (
+                  <div>{item.name}</div>
+                ))}
+              </div>
             );
           }}
         </FilterResults>
@@ -122,8 +126,8 @@ const prefilters = [
     handler: (match, items, Fuse) => {
       const name = match.split(":")[1];
       return items.filter(item => item.author === name);
-    }
-  }
+    },
+  },
 ];
 ```
 
@@ -137,7 +141,7 @@ const prefilters = [
       const [key, value] = match.split(":");
       const fuse = new Fuse(items, { keys: [key] });
       return fuse.search(value);
-    }
-  }
+    },
+  },
 ];
 ```

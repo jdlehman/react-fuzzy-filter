@@ -5,9 +5,10 @@ cache:
   directories:
     - node_modules
 node_js:
-  - 8
-  - 9
+  - 10
+  - stable
 env:
   matrix:
     - TEST_SUITE=lint
     - TEST_SUITE=test
+    - TEST_SUITE=size-limit

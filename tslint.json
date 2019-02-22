@@ -1,0 +1,22 @@
+{
+  "extends": [
+    "tslint:recommended",
+    "tslint-react",
+    "tslint-config-prettier",
+    "tslint-plugin-prettier"
+  ],
+  "rules": {
+    "prettier": [true, "prettier.config.js"],
+    "member-access": [true, "no-public"],
+    "interface-name": [true, "never-prefix"],
+    "only-arrow-functions": false,
+    "max-classes-per-file": false,
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-leading-underscore",
+      "allow-pascal-case"
+    ]
+  }
+}
