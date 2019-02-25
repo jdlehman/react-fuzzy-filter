@@ -1,5 +1,5 @@
-import { shallow } from "enzyme";
 import React from "react";
+import { render } from "react-testing-library";
 import behaviorStore from "../src/behaviorStore";
 import filterResultsFactory, {
   FilterResults,
@@ -35,7 +35,7 @@ describe("FilterResults", () => {
 
   describe("#render", () => {
     it("passes filtered items to child function", () => {
-      shallow(
+      render(
         <Results items={items} fuseConfig={defaultFuseConfig}>
           {filteredResultsSpy}
         </Results>
@@ -45,7 +45,7 @@ describe("FilterResults", () => {
     });
 
     it("renders no items with empty search if defaultAllItems is false", () => {
-      shallow(
+      render(
         <Results
           items={items}
           fuseConfig={defaultFuseConfig}
@@ -61,21 +61,19 @@ describe("FilterResults", () => {
 
   describe("#renderItems", () => {
     it("fuzzy filters items by search state", () => {
-      const component = shallow(
+      render(
         <Results items={items} fuseConfig={defaultFuseConfig}>
           {filteredResultsSpy}
         </Results>
       );
-      component.setState({ search: "hllo" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(3);
-      expect(filteredResultsSpy.mock.calls[2][0]).toEqual([
+      store("hllo");
+      expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
         { name: "two", searchData: "hello", state: "" },
       ]);
 
-      component.setState({ search: "godby" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(4);
-      expect(filteredResultsSpy.mock.calls[3][0]).toEqual([
+      store("godby");
+      expect(filteredResultsSpy).lastCalledWith([
         { name: "three", searchData: "goodbye", state: "archived" },
       ]);
     });
@@ -85,18 +83,16 @@ describe("FilterResults", () => {
         id: "name",
         keys: ["name"],
       };
-      const component = shallow(
+      render(
         <Results fuseConfig={fuseConfig} items={items}>
           {filteredResultsSpy}
         </Results>
       );
-      component.setState({ search: "hllo" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(3);
-      expect(filteredResultsSpy.mock.calls[2][0]).toEqual([]);
+      store("hllo");
+      expect(filteredResultsSpy).lastCalledWith([]);
 
-      component.setState({ search: "ree" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(4);
-      expect(filteredResultsSpy.mock.calls[3][0]).toEqual(["three"]);
+      store("ree");
+      expect(filteredResultsSpy).lastCalledWith(["three"]);
     });
 
     it("supports prefilters", () => {
@@ -116,7 +112,7 @@ describe("FilterResults", () => {
           regex: /\S+:\S+/g,
         },
       ];
-      const component = shallow(
+      render(
         <Results
           fuseConfig={defaultFuseConfig}
           items={items}
@@ -125,22 +121,19 @@ describe("FilterResults", () => {
           {filteredResultsSpy}
         </Results>
       );
-      component.setState({ search: "archived" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(3);
-      expect(filteredResultsSpy.mock.calls[2][0]).toEqual([
+      store("archived");
+      expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
         { name: "three", searchData: "goodbye", state: "archived" },
       ]);
 
-      component.setState({ search: "archived hello" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(4);
-      expect(filteredResultsSpy.mock.calls[3][0]).toEqual([
+      store("archived hello");
+      expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
       ]);
 
-      component.setState({ search: "name:two" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(5);
-      expect(filteredResultsSpy.mock.calls[4][0]).toEqual([
+      store("name:two");
+      expect(filteredResultsSpy).lastCalledWith([
         { name: "two", searchData: "hello", state: "" },
       ]);
     });

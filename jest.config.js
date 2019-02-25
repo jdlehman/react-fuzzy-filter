@@ -1,6 +1,5 @@
 module.exports = {
   collectCoverageFrom: ["src/**/*.{ts,tsx}"],
-  setupFiles: ["<rootDir>/test/setup.ts"],
   transform: {
     ".(ts|tsx)": "ts-jest",
   },

@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InputFilter #render renders with defaults 1`] = `
+<div>
+  <input
+    class="react-fuzzy-filter__input"
+    value=""
+  />
+</div>
+`;
+
+exports[`InputFilter #render sets classPrefix 1`] = `
+<div>
+  <input
+    class="my-prefix__input"
+    value=""
+  />
+</div>
+`;
+
+exports[`InputFilter #render sets initialSearch 1`] = `
+<input
+  class="react-fuzzy-filter__input"
+  value="first search"
+/>
+`;
+
+exports[`InputFilter #render sets inputProps 1`] = `
+<input
+  class="react-fuzzy-filter__input"
+  placeholder="Search"
+  value=""
+/>
+`;
