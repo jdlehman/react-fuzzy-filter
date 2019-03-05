@@ -67,7 +67,7 @@ describe("fuzzyFilterFactory", () => {
     );
     const utils = render(<MyComponent />);
     const input = utils.getByPlaceholderText("Search");
-    expect(resultsSpy).toHaveBeenCalledTimes(2);
+    expect(resultsSpy).toHaveBeenCalledTimes(1);
     expect(resultsSpy).toHaveBeenLastCalledWith([
       { name: "one", searchData: "hello" },
       { name: "two", searchData: "hello" },
@@ -78,7 +78,7 @@ describe("fuzzyFilterFactory", () => {
     fireEvent.change(input, {
       target: { value: "ello" },
     });
-    expect(resultsSpy).toHaveBeenCalledTimes(3);
+    expect(resultsSpy).toHaveBeenCalledTimes(2);
     expect(resultsSpy).toHaveBeenLastCalledWith([
       { name: "one", searchData: "hello" },
       { name: "two", searchData: "hello" },
@@ -87,7 +87,7 @@ describe("fuzzyFilterFactory", () => {
     fireEvent.change(input, {
       target: { value: "gdbye" },
     });
-    expect(resultsSpy).toHaveBeenCalledTimes(4);
+    expect(resultsSpy).toHaveBeenCalledTimes(3);
     expect(resultsSpy).toHaveBeenLastCalledWith([
       { name: "three", searchData: "goodbye" },
     ]);

@@ -1,4 +1,5 @@
 import React from "react";
+import { act } from "react-dom/test-utils";
 import { render } from "react-testing-library";
 import behaviorStore from "../src/behaviorStore";
 import filterResultsFactory, {
@@ -40,8 +41,7 @@ describe("FilterResults", () => {
           {filteredResultsSpy}
         </Results>
       );
-      expect(filteredResultsSpy.mock.calls.length).toEqual(2);
-      expect(filteredResultsSpy.mock.calls[1][0]).toEqual(items);
+      expect(filteredResultsSpy).lastCalledWith(items);
     });
 
     it("renders no items with empty search if defaultAllItems is false", () => {
@@ -54,8 +54,7 @@ describe("FilterResults", () => {
           {filteredResultsSpy}
         </Results>
       );
-      expect(filteredResultsSpy.mock.calls.length).toEqual(2);
-      expect(filteredResultsSpy.mock.calls[1][0]).toEqual([]);
+      expect(filteredResultsSpy).lastCalledWith([]);
     });
   });
 
@@ -66,13 +65,13 @@ describe("FilterResults", () => {
           {filteredResultsSpy}
         </Results>
       );
-      store("hllo");
+      act(() => store("hllo"));
       expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
         { name: "two", searchData: "hello", state: "" },
       ]);
 
-      store("godby");
+      act(() => store("godby"));
       expect(filteredResultsSpy).lastCalledWith([
         { name: "three", searchData: "goodbye", state: "archived" },
       ]);
@@ -88,10 +87,10 @@ describe("FilterResults", () => {
           {filteredResultsSpy}
         </Results>
       );
-      store("hllo");
+      act(() => store("hllo"));
       expect(filteredResultsSpy).lastCalledWith([]);
 
-      store("ree");
+      act(() => store("ree"));
       expect(filteredResultsSpy).lastCalledWith(["three"]);
     });
 
@@ -121,18 +120,18 @@ describe("FilterResults", () => {
           {filteredResultsSpy}
         </Results>
       );
-      store("archived");
+      act(() => store("archived"));
       expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
         { name: "three", searchData: "goodbye", state: "archived" },
       ]);
 
-      store("archived hello");
+      act(() => store("archived hello"));
       expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
       ]);
 
-      store("name:two");
+      act(() => store("name:two"));
       expect(filteredResultsSpy).lastCalledWith([
         { name: "two", searchData: "hello", state: "" },
       ]);

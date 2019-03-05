@@ -1,5 +1,5 @@
 import debounce from "debounce";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Emitter } from "./behaviorStore";
 
 export interface InputFilterProps {
@@ -37,10 +37,11 @@ export default function inputFilterFactory(
     const debouncedUpdate = useCallback(debounce(updateValue, debounceTime), [
       debounceTime,
     ]);
+    const inputRef = useRef(inputValue);
 
     useEffect(() => {
       const unsubscribe = store.on(val => {
-        if (val !== inputValue) {
+        if (val !== inputRef.current) {
           setValue(val);
         }
       });
@@ -50,6 +51,10 @@ export default function inputFilterFactory(
     useEffect(() => {
       updateValue(initialSearch, onChange);
     }, [initialSearch]);
+
+    useEffect(() => {
+      inputRef.current = inputValue;
+    }, [inputValue]);
 
     const handleChange = ({
       target: { value },
