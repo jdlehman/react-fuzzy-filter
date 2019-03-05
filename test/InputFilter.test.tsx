@@ -1,5 +1,6 @@
 import React from "react";
-import { fireEvent, render } from "react-testing-library";
+import { act } from "react-dom/test-utils";
+import { fireEvent, render, wait } from "react-testing-library";
 import behaviorStore from "../src/behaviorStore";
 import inputFilterFactory, { InputFilter } from "../src/InputFilter";
 
@@ -37,22 +38,28 @@ describe("InputFilter", () => {
 
   describe("#onChange", () => {
     let input: Element;
-    const spy = jest.fn().mockImplementation((value: string) => value);
+    let spy: any;
     beforeEach(() => {
+      spy = jest.fn().mockImplementation((value: string) => value);
       const utils = render(
         <Input onChange={spy} inputProps={{ placeholder: "Search" }} />
       );
       input = utils.getByPlaceholderText("Search");
     });
 
-    it.skip("calls callback with search value", () => {
+    it("calls callback with search value", () => {
+      jest.useFakeTimers();
       fireEvent.change(input, {
         target: { value: "my string" },
       });
-      expect(spy).toHaveBeenCalledWith("my string");
+      act(() => {
+        jest.runAllTimers();
+      });
+      wait(() => expect(spy).toHaveBeenCalledWith("my string"));
     });
 
     it("passes the value to the store", done => {
+      jest.useFakeTimers();
       const received = ["", "some input"];
       let ptr = 0;
       store.on(data => {
@@ -65,6 +72,9 @@ describe("InputFilter", () => {
 
       fireEvent.change(input, {
         target: { value: "some input" },
+      });
+      act(() => {
+        jest.runAllTimers();
       });
     });
   });

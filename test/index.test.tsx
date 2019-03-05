@@ -1,5 +1,6 @@
 import { FuseOptions } from "fuse.js";
 import React from "react";
+import { act } from "react-dom/test-utils";
 import { fireEvent, render } from "react-testing-library";
 import fuzzyFilterFactory, {
   FilterResultsProps,
@@ -111,7 +112,9 @@ describe("fuzzyFilterFactory", () => {
     );
     render(<MyComponent />);
     // change value externally
-    changeInputValue("bonjour");
+    act(() => {
+      changeInputValue("bonjour");
+    });
     expect(resultsSpy).toHaveBeenCalledTimes(3);
     expect(resultsSpy).toHaveBeenLastCalledWith([
       { name: "four", searchData: "bonjour" },
