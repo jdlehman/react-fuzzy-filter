@@ -23,8 +23,16 @@
   "bugs": {
     "url": "https://github.com/jdlehman/react-fuzzy-filter/issues"
   },
-  "keywords": ["react", "react-component", "filter", "fuzzy", "javascript"],
-  "files": ["dist"],
+  "keywords": [
+    "react",
+    "react-component",
+    "filter",
+    "fuzzy",
+    "javascript"
+  ],
+  "files": [
+    "dist"
+  ],
   "author": "Jonathan Lehman <jonathan.lehman91@gmail.com>",
   "license": "MIT",
   "devDependencies": {

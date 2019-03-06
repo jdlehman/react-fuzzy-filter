@@ -1,5 +1,5 @@
 import Fuse, { FuseOptions } from "fuse.js";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Emitter, Event } from "./behaviorStore";
 
 export type PreFilterHandler<T> = (
@@ -15,7 +15,7 @@ export interface PreFilter<T> {
 export type Item<T> = T;
 
 export interface FilterResultsProps<T> {
-  children: (items: Array<Item<T>>) => React.ReactElement | null;
+  children: (items: Array<Item<T>>) => React.ReactNode;
   items: Array<Item<T>>;
   defaultAllItems?: boolean;
   fuseConfig: FuseOptions;
@@ -62,7 +62,8 @@ export default function filterResultsFactory<T>(
     };
 
     const filteredItems = filterItems(searchVal);
-    return props.children(filteredItems);
+    // wrap with Fragment to fix type issue
+    return <Fragment>{props.children(filteredItems)}</Fragment>;
   };
   Results.displayName = "FilterResults";
   Results.defaultProps = {
