@@ -1,7 +1,7 @@
 import React from "react";
 import { act } from "react-dom/test-utils";
 import { render } from "react-testing-library";
-import behaviorStore from "../src/behaviorStore";
+import behaviorStore, { EventType } from "../src/behaviorStore";
 import filterResultsFactory, {
   FilterResults,
   PreFilter,
@@ -28,7 +28,7 @@ const defaultFuseConfig = {
 
 describe("FilterResults", () => {
   let Results: FilterResults<TestItem>;
-  const store = behaviorStore("");
+  const store = behaviorStore({ t: EventType.Initial, v: "" });
   beforeEach(() => {
     Results = filterResultsFactory(store);
     filteredResultsSpy.mockClear();
@@ -65,13 +65,13 @@ describe("FilterResults", () => {
           {filteredResultsSpy}
         </Results>
       );
-      act(() => store("hllo"));
+      act(() => store({ t: EventType.Initial, v: "hllo" }));
       expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
         { name: "two", searchData: "hello", state: "" },
       ]);
 
-      act(() => store("godby"));
+      act(() => store({ t: EventType.Initial, v: "godby" }));
       expect(filteredResultsSpy).lastCalledWith([
         { name: "three", searchData: "goodbye", state: "archived" },
       ]);
@@ -87,10 +87,10 @@ describe("FilterResults", () => {
           {filteredResultsSpy}
         </Results>
       );
-      act(() => store("hllo"));
+      act(() => store({ t: EventType.Initial, v: "hllo" }));
       expect(filteredResultsSpy).lastCalledWith([]);
 
-      act(() => store("ree"));
+      act(() => store({ t: EventType.Initial, v: "ree" }));
       expect(filteredResultsSpy).lastCalledWith(["three"]);
     });
 
@@ -120,18 +120,18 @@ describe("FilterResults", () => {
           {filteredResultsSpy}
         </Results>
       );
-      act(() => store("archived"));
+      act(() => store({ t: EventType.Initial, v: "archived" }));
       expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
         { name: "three", searchData: "goodbye", state: "archived" },
       ]);
 
-      act(() => store("archived hello"));
+      act(() => store({ t: EventType.Initial, v: "archived hello" }));
       expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
       ]);
 
-      act(() => store("name:two"));
+      act(() => store({ t: EventType.Initial, v: "name:two" }));
       expect(filteredResultsSpy).lastCalledWith([
         { name: "two", searchData: "hello", state: "" },
       ]);

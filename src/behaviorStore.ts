@@ -7,6 +7,17 @@ export interface Emitter<T> {
 
 export type Disposer = valoo.Disposer;
 
+export enum EventType {
+  Initial = 0,
+  Input,
+  External,
+}
+
+export interface Event {
+  t: EventType; // type
+  v: string; // value
+}
+
 // emulates BehaviorSubject from rxjs
 // (stores current state) and replays it on subscribe
 export default function behaviorStore<T>(initialValue: T): Emitter<T> {

@@ -1,6 +1,6 @@
 import Fuse, { FuseOptions } from "fuse.js";
 import React, { useEffect, useState } from "react";
-import { Emitter } from "./behaviorStore";
+import { Emitter, Event } from "./behaviorStore";
 
 export type PreFilterHandler<T> = (
   match: string,
@@ -25,14 +25,14 @@ export interface FilterResultsProps<T> {
 export type FilterResults<T> = React.FunctionComponent<FilterResultsProps<T>>;
 
 export default function filterResultsFactory<T>(
-  store: Emitter<string>
+  store: Emitter<Event>
 ): FilterResults<T> {
   const Results: FilterResults<T> = (props: FilterResultsProps<T>) => {
     const [searchVal, setSearch] = useState("");
 
     useEffect(() => {
-      const unsubscribe = store.on(val => {
-        setSearch(val);
+      const unsubscribe = store.on(({ v }) => {
+        setSearch(v);
       });
       return unsubscribe;
     }, []);

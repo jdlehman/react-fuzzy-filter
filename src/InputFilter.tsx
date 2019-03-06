@@ -1,6 +1,6 @@
 import debounce from "debounce";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Emitter } from "./behaviorStore";
+import React, { useCallback, useEffect, useState } from "react";
+import { Emitter, Event, EventType } from "./behaviorStore";
 
 export interface InputFilterProps {
   classPrefix?: string;
@@ -18,12 +18,10 @@ const defaultProps = {
   onChange: (value: string) => value,
 };
 
-export default function inputFilterFactory(
-  store: Emitter<string>
-): InputFilter {
+export default function inputFilterFactory(store: Emitter<Event>): InputFilter {
   function updateValue(value: string, onChange: (value: string) => string) {
     const overrideValue = onChange(value);
-    store(overrideValue);
+    store({ t: EventType.Input, v: overrideValue });
   }
 
   const Input: React.FunctionComponent<InputFilterProps> = (
@@ -37,12 +35,11 @@ export default function inputFilterFactory(
     const debouncedUpdate = useCallback(debounce(updateValue, debounceTime), [
       debounceTime,
     ]);
-    const inputRef = useRef(inputValue);
 
     useEffect(() => {
-      const unsubscribe = store.on(val => {
-        if (val !== inputRef.current) {
-          setValue(val);
+      const unsubscribe = store.on(({ v, t }) => {
+        if (t === EventType.External) {
+          setValue(v);
         }
       });
       return unsubscribe;
@@ -52,15 +49,11 @@ export default function inputFilterFactory(
       updateValue(initialSearch, onChange);
     }, [initialSearch]);
 
-    useEffect(() => {
-      inputRef.current = inputValue;
-    }, [inputValue]);
-
     const handleChange = ({
       target: { value },
     }: React.ChangeEvent<HTMLInputElement>) => {
+      setValue(value);
       if (debounceTime) {
-        setValue(value);
         debouncedUpdate(value, onChange);
       } else {
         updateValue(value, onChange);

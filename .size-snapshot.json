@@ -1,35 +1,35 @@
 {
   "./dist/react-fuzzy-filter.umd.production.js": {
-    "bundled": 41437,
-    "minified": 12985,
-    "gzipped": 4705
+    "bundled": 41740,
+    "minified": 13091,
+    "gzipped": 4764
   },
   "./dist/react-fuzzy-filter.umd.development.js": {
-    "bundled": 41437,
-    "minified": 12985,
-    "gzipped": 4705
+    "bundled": 41740,
+    "minified": 13091,
+    "gzipped": 4764
   },
   "./dist/react-fuzzy-filter.cjs.production.js": {
-    "bundled": 4429,
-    "minified": 2064,
-    "gzipped": 858
+    "bundled": 4709,
+    "minified": 2218,
+    "gzipped": 923
   },
   "./dist/react-fuzzy-filter.cjs.development.js": {
-    "bundled": 4429,
-    "minified": 2064,
-    "gzipped": 858
+    "bundled": 4709,
+    "minified": 2218,
+    "gzipped": 923
   },
   "dist/react-fuzzy-filter.esm.js": {
-    "bundled": 3793,
-    "minified": 1859,
-    "gzipped": 804,
+    "bundled": 4072,
+    "minified": 2022,
+    "gzipped": 863,
     "treeshaked": {
       "rollup": {
-        "code": 75,
+        "code": 179,
         "import_statements": 75
       },
       "webpack": {
-        "code": 1191
+        "code": 1295
       }
     }
   }

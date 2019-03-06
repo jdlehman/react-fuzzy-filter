@@ -1,12 +1,12 @@
 import React from "react";
 import { act } from "react-dom/test-utils";
 import { fireEvent, render, wait } from "react-testing-library";
-import behaviorStore from "../src/behaviorStore";
+import behaviorStore, { EventType } from "../src/behaviorStore";
 import inputFilterFactory, { InputFilter } from "../src/InputFilter";
 
 describe("InputFilter", () => {
   let Input: InputFilter;
-  const store = behaviorStore("");
+  const store = behaviorStore({ t: EventType.Initial, v: "" });
   beforeEach(() => {
     Input = inputFilterFactory(store);
   });
@@ -62,8 +62,9 @@ describe("InputFilter", () => {
       jest.useFakeTimers();
       const received = ["", "some input"];
       let ptr = 0;
-      store.on(data => {
-        expect(data).toEqual(received[ptr]);
+      store.on(({ t, v }) => {
+        expect(v).toEqual(received[ptr]);
+        expect(t).toEqual(EventType.Input);
         ptr++;
         if (ptr === 2) {
           done();
