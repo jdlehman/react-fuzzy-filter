@@ -1,6 +1,4 @@
-[![npm version](https://badge.fury.io/js/react-fuzzy-filter.svg)](http://badge.fury.io/js/react-fuzzy-filter)
-[![Build Status](https://secure.travis-ci.org/jdlehman/react-fuzzy-filter.svg?branch=master)](http://travis-ci.org/jdlehman/react-fuzzy-filter)
-[![Dependency Status](https://david-dm.org/jdlehman/react-fuzzy-filter.svg)](https://david-dm.org/jdlehman/react-fuzzy-filter)
+[![npm version](https://img.shields.io/npm/v/react-fuzzy-filter.svg?style=for-the-badge)](https://yarnpkg.com/en/package/react-fuzzy-filter) [![Build Status](https://img.shields.io/badge/ci-travis-green.svg?style=for-the-badge)](https://travis-ci.org/jdlehman/react-fuzzy-filter) [![License](https://img.shields.io/badge/license-mit-red.svg?style=for-the-badge)](LICENSE.md)
 
 # react-fuzzy-filter
 
@@ -10,8 +8,16 @@ ReactFuzzyFilter is powered by [`fuse.js`](https://github.com/krisk/Fuse).
 
 ## Installation
 
+**npm**
+
 ```sh
 npm install -S react-fuzzy-filter
+```
+
+**yarn**
+
+```sh
+yarn add react-fuzzy-filter
 ```
 
 ## Example Usage
@@ -20,7 +26,7 @@ The default export of ReactFuzzyFilter is a factory function that returns two co
 
 ```js
 import React, { Component } from "react";
-import fuzzyFilterFactory from "react-fuzzy-filter";
+import fuzzyFilterFactory, { onChangeInputValue } from "react-fuzzy-filter";
 
 // these components share state and can even live in different components
 const { InputFilter, FilterResults, changeInputValue } = fuzzyFilterFactory();
@@ -35,10 +41,12 @@ class MyComponent extends Component {
     const fuseConfig = {
       keys: ["meta", "tag"],
     };
+    const setInputText = () => onChangeInputValue("hello");
     return (
       <div>
         <InputFilter debounceTime={200} />
         <div>Any amount of content between</div>
+        <button onClick={setInputText}>Set Text to "hello"</button>
         <FilterResults items={items} fuseConfig={fuseConfig}>
           {filteredItems => {
             return (
@@ -87,7 +95,7 @@ An input field that controls the state used to render the items in `FilterResult
 
 ### onChange
 
-`onChange` is an optional callback function that is called BEFORE the value in the input field changes via an `onchange` event. It can optionally return a string, which will then be passed directly to `FilterResults` rather than the original string. This can be used to filter out special inputs (eg: `author:jdlehman`) from fuzzy searching. These special inputs could then be used to change the `items` being passed to `FilterResults`.
+`onChange` is an optional callback function that is called BEFORE the value in the input field changes via an `onchange` event. It should return a string, which will then be passed directly to `FilterResults` rather than the original string (unless the original string is returned). This can be used to filter out special inputs (eg: `author:jdlehman`) from fuzzy searching. These special inputs could then be used to change the `items` being passed to `FilterResults`.
 
 ### debounceTime
 
@@ -95,7 +103,7 @@ An input field that controls the state used to render the items in `FilterResult
 
 # FilterResults
 
-Collection of fuzzy filtered items (filtered by the `InputFilter`'s value), each being rendered by the custom render function (`renderItem` prop).
+Collection of fuzzy filtered items (filtered by the `InputFilter`'s value), each being rendered by the custom render function (`children` prop).
 
 ## Props
 
