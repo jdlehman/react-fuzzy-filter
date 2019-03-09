@@ -95,7 +95,7 @@ An input field that controls the state used to render the items in `FilterResult
 
 ### onChange
 
-`onChange` is an optional callback function that is called BEFORE the value in the input field changes via an `onchange` event. It should return a string, which will then be passed directly to `FilterResults` rather than the original string (unless the original string is returned). This can be used to filter out special inputs (eg: `author:jdlehman`) from fuzzy searching. These special inputs could then be used to change the `items` being passed to `FilterResults`.
+`onChange` is an optional callback function that is called BEFORE the value in the input field changes via an `onchange` event. It should return a string, which will then be passed directly to `FilterResults`. This can be used to filter out special inputs (eg: `author:jdlehman`) from fuzzy searching. These special inputs could then be used to change the `items` being passed to `FilterResults`.
 
 ### debounceTime
 
