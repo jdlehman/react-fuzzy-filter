@@ -1,13 +1,4 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["src", "test"],
-  "exclude": ["node_modules", "dist"],
-  "compilerOptions": {
-    "jsx": "react",
-    "lib": ["es2015", "dom"],
-    "baseUrl": "./",
-    "paths": {
-      "react-fuzzy-filter": ["src/"]
-    }
-  }
+  "include": ["src", "test"]
 }
