@@ -1,6 +1,6 @@
 {
   "name": "react-fuzzy-filter",
-  "version": "5.0.0-alpha.2",
+  "version": "5.0.0-alpha.3",
   "description": "Render a subset of a collection with fuzzy searching",
   "main": "dist/index.js",
   "module": "dist/react-fuzzy-filter.esm.js",
