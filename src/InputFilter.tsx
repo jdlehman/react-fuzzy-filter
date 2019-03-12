@@ -47,7 +47,7 @@ export default function inputFilterFactory(store: Emitter<Event>): InputFilter {
 
     useEffect(() => {
       updateValue(initialSearch, onChange);
-    }, [initialSearch]);
+    }, [initialSearch, onChange]);
 
     const handleChange = ({
       target: { value },
