@@ -1,73 +1,81 @@
-import { shallow } from "enzyme";
 import React from "react";
-import behaviorStore from "../src/behaviorStore";
+import { act } from "react-dom/test-utils";
+import { fireEvent, render, wait } from "react-testing-library";
+import behaviorStore, { EventType } from "../src/behaviorStore";
 import inputFilterFactory, { InputFilter } from "../src/InputFilter";
 
 describe("InputFilter", () => {
   let Input: InputFilter;
-  const store = behaviorStore("");
+  const store = behaviorStore({ t: EventType.Initial, v: "" });
   beforeEach(() => {
     Input = inputFilterFactory(store);
   });
 
   describe("#render", () => {
     it("renders with defaults", () => {
-      const component = shallow(<Input />);
-      expect(component.find(".react-fuzzy-filter__input").length).toEqual(1);
+      const utils = render(<Input />);
+      expect(utils.container).toMatchSnapshot();
     });
 
     it("sets classPrefix", () => {
-      const component = shallow(<Input classPrefix="my-prefix" />);
-      expect(component.find(".my-prefix__input").length).toEqual(1);
+      const utils = render(<Input classPrefix="my-prefix" />);
+      expect(utils.container).toMatchSnapshot();
     });
 
     it("sets inputProps", () => {
       const inputProps = { placeholder: "Search" };
-      const component = shallow(<Input inputProps={inputProps} />);
-      expect(component.find(".react-fuzzy-filter__input").html()).toEqual(
-        '<input class="react-fuzzy-filter__input" value="" placeholder="Search"/>'
-      );
+      const utils = render(<Input inputProps={inputProps} />);
+      const input = utils.getByPlaceholderText("Search");
+      expect(input).toMatchSnapshot();
     });
 
     it("sets initialSearch", () => {
-      const component = shallow(<Input initialSearch="first search" />);
-      expect(component.find("input").html()).toEqual(
-        '<input class="react-fuzzy-filter__input" value="first search"/>'
-      );
+      const utils = render(<Input initialSearch="first search" />);
+      const input = utils.getByValue("first search");
+      expect(input).toMatchSnapshot();
     });
   });
 
   describe("#onChange", () => {
-    let component: any;
-    const spy = jest.fn();
-    const change = (value: string) => {
-      spy(value);
-      return value;
-    };
+    let input: Element;
+    let spy: any;
     beforeEach(() => {
-      component = shallow(<Input onChange={change} />);
+      spy = jest.fn().mockImplementation((value: string) => value);
+      const utils = render(
+        <Input onChange={spy} inputProps={{ placeholder: "Search" }} />
+      );
+      input = utils.getByPlaceholderText("Search");
     });
 
     it("calls callback with search value", () => {
-      component.find("input").simulate("change", {
+      jest.useFakeTimers();
+      fireEvent.change(input, {
         target: { value: "my string" },
       });
-      expect(spy).toHaveBeenCalledWith("my string");
+      act(() => {
+        jest.runAllTimers();
+      });
+      wait(() => expect(spy).toHaveBeenCalledWith("my string"));
     });
 
     it("passes the value to the store", done => {
+      jest.useFakeTimers();
       const received = ["", "some input"];
       let ptr = 0;
-      store.on(data => {
-        expect(data).toEqual(received[ptr]);
+      store.on(({ t, v }) => {
+        expect(v).toEqual(received[ptr]);
+        expect(t).toEqual(EventType.Input);
         ptr++;
         if (ptr === 2) {
           done();
         }
       });
 
-      component.find("input").simulate("change", {
+      fireEvent.change(input, {
         target: { value: "some input" },
+      });
+      act(() => {
+        jest.runAllTimers();
       });
     });
   });

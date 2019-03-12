@@ -1,6 +1,7 @@
-import { shallow } from "enzyme";
 import React from "react";
-import behaviorStore from "../src/behaviorStore";
+import { act } from "react-dom/test-utils";
+import { render } from "react-testing-library";
+import behaviorStore, { EventType } from "../src/behaviorStore";
 import filterResultsFactory, {
   FilterResults,
   PreFilter,
@@ -27,7 +28,7 @@ const defaultFuseConfig = {
 
 describe("FilterResults", () => {
   let Results: FilterResults<TestItem>;
-  const store = behaviorStore("");
+  const store = behaviorStore({ t: EventType.Initial, v: "" });
   beforeEach(() => {
     Results = filterResultsFactory(store);
     filteredResultsSpy.mockClear();
@@ -35,17 +36,16 @@ describe("FilterResults", () => {
 
   describe("#render", () => {
     it("passes filtered items to child function", () => {
-      shallow(
+      render(
         <Results items={items} fuseConfig={defaultFuseConfig}>
           {filteredResultsSpy}
         </Results>
       );
-      expect(filteredResultsSpy.mock.calls.length).toEqual(2);
-      expect(filteredResultsSpy.mock.calls[1][0]).toEqual(items);
+      expect(filteredResultsSpy).lastCalledWith(items);
     });
 
     it("renders no items with empty search if defaultAllItems is false", () => {
-      shallow(
+      render(
         <Results
           items={items}
           fuseConfig={defaultFuseConfig}
@@ -54,28 +54,25 @@ describe("FilterResults", () => {
           {filteredResultsSpy}
         </Results>
       );
-      expect(filteredResultsSpy.mock.calls.length).toEqual(2);
-      expect(filteredResultsSpy.mock.calls[1][0]).toEqual([]);
+      expect(filteredResultsSpy).lastCalledWith([]);
     });
   });
 
   describe("#renderItems", () => {
     it("fuzzy filters items by search state", () => {
-      const component = shallow(
+      render(
         <Results items={items} fuseConfig={defaultFuseConfig}>
           {filteredResultsSpy}
         </Results>
       );
-      component.setState({ search: "hllo" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(3);
-      expect(filteredResultsSpy.mock.calls[2][0]).toEqual([
+      act(() => store({ t: EventType.Initial, v: "hllo" }));
+      expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
         { name: "two", searchData: "hello", state: "" },
       ]);
 
-      component.setState({ search: "godby" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(4);
-      expect(filteredResultsSpy.mock.calls[3][0]).toEqual([
+      act(() => store({ t: EventType.Initial, v: "godby" }));
+      expect(filteredResultsSpy).lastCalledWith([
         { name: "three", searchData: "goodbye", state: "archived" },
       ]);
     });
@@ -85,18 +82,16 @@ describe("FilterResults", () => {
         id: "name",
         keys: ["name"],
       };
-      const component = shallow(
+      render(
         <Results fuseConfig={fuseConfig} items={items}>
           {filteredResultsSpy}
         </Results>
       );
-      component.setState({ search: "hllo" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(3);
-      expect(filteredResultsSpy.mock.calls[2][0]).toEqual([]);
+      act(() => store({ t: EventType.Initial, v: "hllo" }));
+      expect(filteredResultsSpy).lastCalledWith([]);
 
-      component.setState({ search: "ree" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(4);
-      expect(filteredResultsSpy.mock.calls[3][0]).toEqual(["three"]);
+      act(() => store({ t: EventType.Initial, v: "ree" }));
+      expect(filteredResultsSpy).lastCalledWith(["three"]);
     });
 
     it("supports prefilters", () => {
@@ -116,7 +111,7 @@ describe("FilterResults", () => {
           regex: /\S+:\S+/g,
         },
       ];
-      const component = shallow(
+      render(
         <Results
           fuseConfig={defaultFuseConfig}
           items={items}
@@ -125,22 +120,19 @@ describe("FilterResults", () => {
           {filteredResultsSpy}
         </Results>
       );
-      component.setState({ search: "archived" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(3);
-      expect(filteredResultsSpy.mock.calls[2][0]).toEqual([
+      act(() => store({ t: EventType.Initial, v: "archived" }));
+      expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
         { name: "three", searchData: "goodbye", state: "archived" },
       ]);
 
-      component.setState({ search: "archived hello" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(4);
-      expect(filteredResultsSpy.mock.calls[3][0]).toEqual([
+      act(() => store({ t: EventType.Initial, v: "archived hello" }));
+      expect(filteredResultsSpy).lastCalledWith([
         { name: "one", searchData: "hello", state: "archived" },
       ]);
 
-      component.setState({ search: "name:two" });
-      expect(filteredResultsSpy.mock.calls.length).toEqual(5);
-      expect(filteredResultsSpy.mock.calls[4][0]).toEqual([
+      act(() => store({ t: EventType.Initial, v: "name:two" }));
+      expect(filteredResultsSpy).lastCalledWith([
         { name: "two", searchData: "hello", state: "" },
       ]);
     });

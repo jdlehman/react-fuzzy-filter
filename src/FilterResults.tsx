@@ -1,6 +1,6 @@
 import Fuse, { FuseOptions } from "fuse.js";
-import { Component } from "react";
-import { Disposer, Emitter } from "./behaviorStore";
+import React, { Fragment, useEffect, useState } from "react";
+import { Emitter, Event } from "./behaviorStore";
 
 export type PreFilterHandler<T> = (
   match: string,
@@ -22,67 +22,54 @@ export interface FilterResultsProps<T> {
   prefilters?: Array<PreFilter<T>>;
 }
 
-interface FilterResultsState {
-  search: string;
-}
-
-export type FilterResults<T> = React.ComponentType<FilterResultsProps<T>>;
+export type FilterResults<T> = React.FunctionComponent<FilterResultsProps<T>>;
 
 export default function filterResultsFactory<T>(
-  store: Emitter<string>
+  store: Emitter<Event>
 ): FilterResults<T> {
-  class Results<U> extends Component<
-    FilterResultsProps<U>,
-    FilterResultsState
-  > {
-    static displayName = "FilterResults";
-    static defaultProps = {
-      defaultAllItems: true,
-      prefilters: [],
-    };
-    state = {
-      search: "",
-    };
-    // tslint:disable-next-line:no-empty
-    unsubscribe: Disposer = () => {};
+  const Results: FilterResults<T> = (props: FilterResultsProps<T>) => {
+    const [searchVal, setSearch] = useState("");
 
-    componentDidMount() {
-      this.unsubscribe = store.on(search => {
-        this.setState({ search });
+    useEffect(() => {
+      const unsubscribe = store.on(({ v }) => {
+        setSearch(v);
       });
-    }
+      return unsubscribe;
+    }, []);
 
-    componentWillUnmount() {
-      this.unsubscribe();
-    }
-
-    prefilterItems(search: string): { items: Array<Item<U>>; search: string } {
-      let items = this.props.items;
-      (this.props.prefilters || []).forEach(({ regex, handler }) => {
-        const matches = search.match(regex) || [];
-        search = search.replace(regex, "").trim();
+    const prefilterItems = (
+      s: string
+    ): { items: Array<Item<T>>; search: string } => {
+      let items = props.items;
+      (props.prefilters || []).forEach(({ regex, handler }) => {
+        const matches = s.match(regex) || [];
+        s = s.replace(regex, "").trim();
         matches.forEach(match => {
           items = handler(match, items, Fuse);
         });
       });
-      return { items, search };
-    }
+      return { items, search: s };
+    };
 
-    filterItems(): Array<Item<U>> {
-      const { items, search } = this.prefilterItems(this.state.search || "");
+    const filterItems = (s: string): Array<Item<T>> => {
+      const { items, search } = prefilterItems(s || "");
       if (search.trim() === "") {
-        return this.props.defaultAllItems ? items : [];
+        return props.defaultAllItems ? items : [];
       } else {
-        const fuse = new Fuse(items, this.props.fuseConfig);
+        const fuse = new Fuse(items, props.fuseConfig);
         return fuse.search(search);
       }
-    }
+    };
 
-    render() {
-      const filteredItems = this.filterItems();
-      return this.props.children(filteredItems);
-    }
-  }
+    const filteredItems = filterItems(searchVal);
+    // wrap with Fragment to fix type issue
+    return <Fragment>{props.children(filteredItems)}</Fragment>;
+  };
+  Results.displayName = "FilterResults";
+  Results.defaultProps = {
+    defaultAllItems: true,
+    prefilters: [],
+  };
 
   return Results;
 }

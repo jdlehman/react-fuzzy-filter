@@ -1,6 +1,7 @@
-import { mount } from "enzyme";
 import { FuseOptions } from "fuse.js";
 import React from "react";
+import { act } from "react-dom/test-utils";
+import { fireEvent, render } from "react-testing-library";
 import fuzzyFilterFactory, {
   FilterResultsProps,
   InputFilterProps,
@@ -59,70 +60,64 @@ describe("fuzzyFilterFactory", () => {
     expect(InputFilter.displayName).toEqual("InputFilter");
   });
 
-  it("input controls filter results", done => {
+  it("input controls filter results", () => {
     const { MyComponent } = componentFactory(
       {},
       { items, fuseConfig: defaultFuseConfig, children: resultsSpy }
     );
-    const component = mount(<MyComponent />);
-    setTimeout(() => {
-      expect(resultsSpy).toHaveBeenCalledTimes(2);
-      expect(resultsSpy).toHaveBeenLastCalledWith([
-        { name: "one", searchData: "hello" },
-        { name: "two", searchData: "hello" },
-        { name: "three", searchData: "goodbye" },
-        { name: "four", searchData: "bonjour" },
-      ]);
+    const utils = render(<MyComponent />);
+    const input = utils.getByPlaceholderText("Search");
+    expect(resultsSpy).toHaveBeenCalledTimes(1);
+    expect(resultsSpy).toHaveBeenLastCalledWith([
+      { name: "one", searchData: "hello" },
+      { name: "two", searchData: "hello" },
+      { name: "three", searchData: "goodbye" },
+      { name: "four", searchData: "bonjour" },
+    ]);
 
-      component.find("input").simulate("change", {
-        target: { value: "ello" },
-      });
-      expect(resultsSpy).toHaveBeenCalledTimes(3);
-      expect(resultsSpy).toHaveBeenLastCalledWith([
-        { name: "one", searchData: "hello" },
-        { name: "two", searchData: "hello" },
-      ]);
-
-      component.find("input").simulate("change", {
-        target: { value: "gdbye" },
-      });
-      expect(resultsSpy).toHaveBeenCalledTimes(4);
-      expect(resultsSpy).toHaveBeenLastCalledWith([
-        { name: "three", searchData: "goodbye" },
-      ]);
-      done();
+    fireEvent.change(input, {
+      target: { value: "ello" },
     });
+    expect(resultsSpy).toHaveBeenCalledTimes(2);
+    expect(resultsSpy).toHaveBeenLastCalledWith([
+      { name: "one", searchData: "hello" },
+      { name: "two", searchData: "hello" },
+    ]);
+
+    fireEvent.change(input, {
+      target: { value: "gdbye" },
+    });
+    expect(resultsSpy).toHaveBeenCalledTimes(3);
+    expect(resultsSpy).toHaveBeenLastCalledWith([
+      { name: "three", searchData: "goodbye" },
+    ]);
   });
 
-  it("uses initialSearch", done => {
+  it("uses initialSearch", () => {
     const { MyComponent } = componentFactory(
       { initialSearch: "gdbye" },
       { items, fuseConfig: defaultFuseConfig, children: resultsSpy }
     );
-    mount(<MyComponent />);
-    setTimeout(() => {
-      expect(resultsSpy).toHaveBeenCalledTimes(2);
-      expect(resultsSpy).toHaveBeenLastCalledWith([
-        { name: "three", searchData: "goodbye" },
-      ]);
-      done();
-    });
+    render(<MyComponent />);
+    expect(resultsSpy).toHaveBeenCalledTimes(2);
+    expect(resultsSpy).toHaveBeenLastCalledWith([
+      { name: "three", searchData: "goodbye" },
+    ]);
   });
 
-  it("handles external input value changes via changeInputValue function", done => {
+  it("handles external input value changes via changeInputValue function", () => {
     const { MyComponent, changeInputValue } = componentFactory(
       { initialSearch: "gdbye" },
       { items, fuseConfig: defaultFuseConfig, children: resultsSpy }
     );
-    mount(<MyComponent />);
+    render(<MyComponent />);
     // change value externally
-    setTimeout(() => changeInputValue("bonjour"));
-    setTimeout(() => {
-      expect(resultsSpy).toHaveBeenCalledTimes(3);
-      expect(resultsSpy).toHaveBeenLastCalledWith([
-        { name: "four", searchData: "bonjour" },
-      ]);
-      done();
+    act(() => {
+      changeInputValue("bonjour");
     });
+    expect(resultsSpy).toHaveBeenCalledTimes(3);
+    expect(resultsSpy).toHaveBeenLastCalledWith([
+      { name: "four", searchData: "bonjour" },
+    ]);
   });
 });
