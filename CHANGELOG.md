@@ -6,6 +6,7 @@ Changed:
 
 - Using react hooks internally. **Breaking:** React peer dependency is now 16.8.0
 - 4.x.x branch will continue to release patches, etc. for older versions of React
+- Smaller bundle!
 
 ## 4.3.0 (2019-2-22)
 
