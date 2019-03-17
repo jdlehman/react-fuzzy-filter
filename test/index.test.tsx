@@ -47,7 +47,7 @@ function componentFactory(
 }
 
 describe("fuzzyFilterFactory", () => {
-  let resultsSpy: any;
+  let resultsSpy: jest.Mock;
   beforeEach(() => {
     resultsSpy = jest.fn().mockImplementation(() => <div />);
   });

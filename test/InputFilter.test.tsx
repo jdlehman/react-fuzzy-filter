@@ -38,7 +38,7 @@ describe("InputFilter", () => {
 
   describe("#onChange", () => {
     let input: Element;
-    let spy: any;
+    let spy: jest.Mock;
     beforeEach(() => {
       spy = jest.fn().mockImplementation((value: string) => value);
       const utils = render(
