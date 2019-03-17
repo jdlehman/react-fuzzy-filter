@@ -13,7 +13,6 @@
     "size-limit": "$(yarn bin)/size-limit",
     "test": "$(yarn bin)/jest",
     "prebuild": "rimraf dist",
-    "precommit": "lint-staged",
     "prepublish": "yarn run build"
   },
   "repository": {
@@ -81,5 +80,10 @@
   "resolutions": {
     "merge": "1.2.1",
     "terser": "3.14.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
