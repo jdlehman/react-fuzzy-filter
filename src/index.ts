@@ -7,8 +7,8 @@ export {
   FilterResultsProps,
   PreFilter,
   PreFilterHandler,
-  Item,
 } from "./FilterResults";
+export { FuseOptions, FuseResult } from "fuse.js";
 export { InputFilter, InputFilterProps } from "./InputFilter";
 
 export default function fuzzyFilterFactory<T>() {

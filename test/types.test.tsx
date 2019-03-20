@@ -1,5 +1,5 @@
 import React from "react";
-import fuzzyFilterFactory, { PreFilter } from "../src";
+import fuzzyFilterFactory, { FuseOptions, PreFilter } from "../src";
 
 interface TestItem {
   name: string;
@@ -34,10 +34,13 @@ it("provides necessary types for usage", () => {
   const { InputFilter, FilterResults, changeInputValue } = fuzzyFilterFactory<
     TestItem
   >();
+  const fuseConfig: FuseOptions<TestItem> = {
+    keys: ["searchData"],
+  };
   const minimalProps = (
     <div>
       <InputFilter />
-      <FilterResults items={data} fuseConfig={{ keys: ["searchData"] }}>
+      <FilterResults items={data} fuseConfig={fuseConfig}>
         {items => items.map((item, i) => <div key={i}>{item.name}</div>)}
       </FilterResults>
     </div>

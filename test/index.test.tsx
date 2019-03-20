@@ -1,10 +1,10 @@
-import { FuseOptions } from "fuse.js";
 import React from "react";
 import { act } from "react-dom/test-utils";
 import { fireEvent, render } from "react-testing-library";
 import fuzzyFilterFactory, {
   FilterResultsProps,
   InputFilterProps,
+  FuseOptions,
 } from "../src";
 
 interface TestItem {
@@ -18,7 +18,7 @@ const items: TestItem[] = [
   { name: "four", searchData: "bonjour" },
 ];
 
-const defaultFuseConfig: FuseOptions = {
+const defaultFuseConfig: FuseOptions<TestItem> = {
   keys: ["searchData"],
 };
 

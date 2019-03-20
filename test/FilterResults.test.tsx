@@ -6,6 +6,7 @@ import filterResultsFactory, {
   FilterResults,
   PreFilter,
 } from "../src/FilterResults";
+import { FuseOptions } from "../src";
 
 const filteredResultsSpy = jest.fn().mockImplementation(() => <div />);
 
@@ -22,7 +23,7 @@ const items: TestItem[] = [
   { name: "four", searchData: "bonjour", state: "enabled" },
 ];
 
-const defaultFuseConfig = {
+const defaultFuseConfig: FuseOptions<TestItem> = {
   keys: ["searchData"],
 };
 
@@ -78,7 +79,7 @@ describe("FilterResults", () => {
     });
 
     it("accepts fuse config", () => {
-      const fuseConfig = {
+      const fuseConfig: FuseOptions<TestItem> = {
         id: "name",
         keys: ["name"],
       };

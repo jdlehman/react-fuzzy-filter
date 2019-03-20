@@ -4,21 +4,19 @@ import { Emitter, Event } from "./behaviorStore";
 
 export type PreFilterHandler<T> = (
   match: string,
-  items: Array<Item<T>>,
+  items: T[],
   fuse: typeof Fuse
-) => Array<Item<T>>;
+) => T[];
 
 export interface PreFilter<T> {
   regex: RegExp;
   handler: PreFilterHandler<T>;
 }
-export type Item<T> = T;
-
 export interface FilterResultsProps<T> {
-  children: (items: Array<Item<T>>) => React.ReactNode;
-  items: Array<Item<T>>;
+  children: (items: T[]) => React.ReactNode;
+  items: T[];
   defaultAllItems?: boolean;
-  fuseConfig: FuseOptions;
+  fuseConfig: FuseOptions<T>;
   prefilters?: Array<PreFilter<T>>;
 }
 
@@ -37,9 +35,7 @@ export default function filterResultsFactory<T>(
       return unsubscribe;
     }, []);
 
-    const prefilterItems = (
-      s: string
-    ): { items: Array<Item<T>>; search: string } => {
+    const prefilterItems = (s: string): { items: T[]; search: string } => {
       let items = props.items;
       (props.prefilters || []).forEach(({ regex, handler }) => {
         const matches = s.match(regex) || [];
@@ -51,7 +47,7 @@ export default function filterResultsFactory<T>(
       return { items, search: s };
     };
 
-    const filterItems = (s: string): Array<Item<T>> => {
+    const filterItems = (s: string): T[] => {
       const { items, search } = prefilterItems(s || "");
       if (search.trim() === "") {
         return props.defaultAllItems ? items : [];
