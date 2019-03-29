@@ -11,8 +11,8 @@ import pkg from "./package.json";
 const input = "./compiled/index.js";
 const external = id => !id.startsWith(".") && !id.startsWith("/");
 const babelOptions = {
-  exclude: /node_modules/,
-  plugins: ["annotate-pure-calls", "dev-expression"],
+  exclude: /node_modules\/(?!(valoo)\/).*/,
+  plugins: ["annotate-pure-calls", "dev-expression", "transform-es2015-arrow-functions"],
 };
 
 const buildUmd = ({ env }) => ({

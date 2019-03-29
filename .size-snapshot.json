@@ -1,13 +1,13 @@
 {
   "./dist/react-fuzzy-filter.umd.production.js": {
-    "bundled": 20142,
-    "minified": 13980,
-    "gzipped": 5027
+    "bundled": 20199,
+    "minified": 14001,
+    "gzipped": 5022
   },
   "./dist/react-fuzzy-filter.umd.development.js": {
-    "bundled": 20142,
-    "minified": 13980,
-    "gzipped": 5027
+    "bundled": 20199,
+    "minified": 14001,
+    "gzipped": 5022
   },
   "./dist/react-fuzzy-filter.cjs.production.js": {
     "bundled": 4771,
