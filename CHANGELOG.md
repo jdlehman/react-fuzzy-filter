@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.1 (2019-4-1)
+
+Fixed:
+
+- Removed arrow functions from UMD builds to support older browsers. Thanks @rburak for contributing!
+
 ## 5.0.0 (2019-3-16)
 
 Changed:
