@@ -15,6 +15,13 @@ const babelOptions = {
   plugins: ["annotate-pure-calls", "dev-expression"],
 };
 
+const rollupAlias = aliases => ({
+  resolveId(importee) {
+    const alias = aliases[importee];
+    return alias ? this.resolveId(alias) : null;
+  }
+});
+
 const buildUmd = ({ env }) => ({
   input,
   external: ["react", "react-native"],
@@ -31,6 +38,9 @@ const buildUmd = ({ env }) => ({
   },
 
   plugins: [
+    rollupAlias({
+      valoo: 'valoo/dist/valoo'
+    }),
     resolve(),
     babel(babelOptions),
     replace({
