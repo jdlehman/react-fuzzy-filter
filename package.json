@@ -22,8 +22,16 @@
   "bugs": {
     "url": "https://github.com/jdlehman/react-fuzzy-filter/issues"
   },
-  "keywords": ["react", "react-component", "filter", "fuzzy", "javascript"],
-  "files": ["dist"],
+  "keywords": [
+    "react",
+    "react-component",
+    "filter",
+    "fuzzy",
+    "javascript"
+  ],
+  "files": [
+    "dist"
+  ],
   "author": "Jonathan Lehman <jonathan.lehman91@gmail.com>",
   "license": "MIT",
   "devDependencies": {
@@ -62,7 +70,7 @@
     "rollup-plugin-size-snapshot": "^0.8.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-terser": "^4.0.2",
-    "size-limit": "^0.21.1",
+    "size-limit": "^1.3.3",
     "ts-jest": "^24.0.0",
     "typescript": "^3.3.1"
   },
