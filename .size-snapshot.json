@@ -1,28 +1,28 @@
 {
   "./dist/react-fuzzy-filter.umd.production.js": {
-    "bundled": 20556,
-    "minified": 13997,
-    "gzipped": 5019
+    "bundled": 20608,
+    "minified": 14039,
+    "gzipped": 5029
   },
   "./dist/react-fuzzy-filter.umd.development.js": {
-    "bundled": 20556,
-    "minified": 13997,
-    "gzipped": 5019
+    "bundled": 20608,
+    "minified": 14039,
+    "gzipped": 5029
   },
   "./dist/react-fuzzy-filter.cjs.production.js": {
-    "bundled": 4771,
-    "minified": 2270,
-    "gzipped": 937
+    "bundled": 4767,
+    "minified": 2266,
+    "gzipped": 935
   },
   "./dist/react-fuzzy-filter.cjs.development.js": {
-    "bundled": 4771,
-    "minified": 2270,
-    "gzipped": 937
+    "bundled": 4767,
+    "minified": 2266,
+    "gzipped": 935
   },
   "dist/react-fuzzy-filter.esm.js": {
     "bundled": 4129,
-    "minified": 2068,
-    "gzipped": 876,
+    "minified": 2082,
+    "gzipped": 882,
     "treeshaked": {
       "rollup": {
         "code": 179,
@@ -32,5 +32,25 @@
         "code": 1295
       }
     }
+  },
+  "dist/react-fuzzy-filter.umd.production.js": {
+    "bundled": 20584,
+    "minified": 15192,
+    "gzipped": 5612
+  },
+  "dist/react-fuzzy-filter.umd.development.js": {
+    "bundled": 20584,
+    "minified": 15192,
+    "gzipped": 5612
+  },
+  "dist/react-fuzzy-filter.cjs.production.js": {
+    "bundled": 4767,
+    "minified": 2280,
+    "gzipped": 941
+  },
+  "dist/react-fuzzy-filter.cjs.development.js": {
+    "bundled": 4767,
+    "minified": 2280,
+    "gzipped": 941
   }
 }

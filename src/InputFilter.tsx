@@ -27,6 +27,7 @@ export default function inputFilterFactory(store: Emitter<Event>): InputFilter {
   const Input: React.FunctionComponent<InputFilterProps> = (
     props: InputFilterProps
   ) => {
+    console.log(props);
     const initialSearch = props.initialSearch || "";
     const onChange = props.onChange || defaultProps.onChange;
     const debounceTime = props.debounceTime || defaultProps.debounceTime;
